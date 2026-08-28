@@ -1,0 +1,40 @@
+[project]
+name = "content-creator-backend"
+version = "1.0.0"
+description = "Local AI content creation platform - backend"
+requires-python = ">=3.12,<3.13"
+
+dependencies = [
+    "fastapi==0.118.0",
+    "uvicorn[standard]==0.37.0",
+    "pydantic==2.11.7",
+    "pydantic-settings==2.10.1",
+    "python-multipart==0.0.20",
+    "edge-tts==7.2.8",
+]
+
+[project.optional-dependencies]
+# Local speech recognition engine. Installed by scripts/setup.ps1 unless skipped.
+# Kept optional so the platform still boots and reports the missing dependency
+# cleanly (see app/transcription/providers/faster_whisper_provider.py).
+asr = [
+    "faster-whisper==1.1.1",
+    "requests==2.32.5",
+]
+dev = [
+    "pytest==8.4.1",
+    "pytest-asyncio==1.1.0",
+    "httpx==0.28.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = ["ignore::DeprecationWarning"]

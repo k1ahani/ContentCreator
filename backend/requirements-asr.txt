@@ -1,0 +1,7 @@
+# Optional local speech-recognition engine (CPU, offline).
+# Installed separately so the platform boots without it.
+faster-whisper==1.1.1
+# Undeclared transitive dependency of faster-whisper 1.1.1 (imported by
+# faster_whisper.utils but missing from its own metadata). Pinned explicitly
+# so `pip install -r` produces a working install.
+requests==2.32.5

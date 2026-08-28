@@ -1,0 +1,8 @@
+# Pinned runtime dependencies (mirror of pyproject.toml [project.dependencies]).
+# Install with:  uv pip install -r requirements.txt
+fastapi==0.118.0
+uvicorn[standard]==0.37.0
+pydantic==2.11.7
+pydantic-settings==2.10.1
+python-multipart==0.0.20
+edge-tts==7.2.8
