@@ -10,10 +10,18 @@ import { Plus, Subtitles as SubtitlesIcon, Clock, Trash2 } from "lucide-react";
 import { useProject } from "@/hooks/useProject";
 import { documentsApi, jobsApi, subtitlesApi } from "@/lib/api/resources";
 import { useJobRunner } from "@/hooks/useJobRunner";
-import { Card, CardBody, Button, Dialog, Field, Select, EmptyState, Badge, toast } from "@/components/ui";
+import { Card, CardBody, Button, Dialog, Field, Select, Input, EmptyState, Badge, toast } from "@/components/ui";
 import { formatDuration, formatRelativeTime } from "@/lib/format";
 import { ApiError } from "@/lib/api/client";
-import type { Language } from "@/lib/api/types";
+import type { Language, SubtitleSegmentationMode } from "@/lib/api/types";
+
+const SEGMENTATION_MODES: { value: SubtitleSegmentationMode; label: string; hint: string }[] = [
+  { value: "sentence", label: "جمله‌ای", hint: "هر قطعه دقیقاً یک جمله کامل است." },
+  { value: "automatic", label: "خودکار", hint: "تعداد کلمات هر قطعه بر اساس زمان‌بندی و متن تعیین می‌شود." },
+  { value: "short", label: "کوتاه", hint: "تعداد کمی کلمه در هر قطعه (مناسب شبکه‌های اجتماعی)." },
+  { value: "normal", label: "استاندارد", hint: "تعداد معمول کلمه در هر قطعه." },
+  { value: "custom", label: "دلخواه", hint: "تعداد دقیق کلمات هر قطعه را خودتان مشخص کنید." },
+];
 
 export function SubtitlesPage() {
   const { projectId } = useProject();
@@ -21,6 +29,8 @@ export function SubtitlesPage() {
   const [generateOpen, setGenerateOpen] = useState(false);
   const [docId, setDocId] = useState("");
   const [language, setLanguage] = useState<Language>("fa");
+  const [segmentationMode, setSegmentationMode] = useState<SubtitleSegmentationMode>("automatic");
+  const [wordsPerCue, setWordsPerCue] = useState(1);
 
   const { data: tracks, isLoading } = useQuery({
     queryKey: ["subtitleTracks", projectId],
@@ -54,7 +64,12 @@ export function SubtitlesPage() {
   const generate = () => {
     if (!docId) return;
     generateRunner.run(() =>
-      jobsApi.generateSubtitles(projectId, { document_id: docId, language }),
+      jobsApi.generateSubtitles(projectId, {
+        document_id: docId,
+        language,
+        segmentation_mode: segmentationMode,
+        words_per_cue: segmentationMode === "custom" ? wordsPerCue : undefined,
+      }),
     );
   };
 
@@ -158,6 +173,33 @@ export function SubtitlesPage() {
               <option value="en">English</option>
             </Select>
           </Field>
+          <Field
+            label="نحوه قطعه‌بندی زیرنویس"
+            hint={SEGMENTATION_MODES.find((m) => m.value === segmentationMode)?.hint}
+          >
+            <Select
+              value={segmentationMode}
+              onChange={(e) => setSegmentationMode(e.target.value as SubtitleSegmentationMode)}
+            >
+              {SEGMENTATION_MODES.map((mode) => (
+                <option key={mode.value} value={mode.value}>
+                  {mode.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          {segmentationMode === "custom" && (
+            <Field label="تعداد کلمه در هر قطعه">
+              <Input
+                type="number"
+                ltr
+                min={1}
+                max={20}
+                value={wordsPerCue}
+                onChange={(e) => setWordsPerCue(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
+              />
+            </Field>
+          )}
           {generateRunner.error && (
             <p className="text-sm text-red-600 dark:text-red-400">{generateRunner.error}</p>
           )}

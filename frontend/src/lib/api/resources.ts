@@ -28,6 +28,7 @@ import type {
   SpeakingStyle,
   SubtitleCue,
   SubtitleFormat,
+  SubtitleSegmentationMode,
   SubtitleStyle,
   SubtitleTrack,
   SystemStatus,
@@ -135,6 +136,8 @@ export const jobsApi = {
       language?: Language;
       name?: string;
       duration_seconds?: number;
+      segmentation_mode?: SubtitleSegmentationMode;
+      words_per_cue?: number;
     },
   ) => api.post<JobAcceptedResponse>(`/projects/${projectId}/subtitles/generate`, data),
 

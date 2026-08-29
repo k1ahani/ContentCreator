@@ -6,7 +6,7 @@ import pytest
 
 from app.core.errors import SubtitleError
 from app.core.timecode import format_ass, format_srt, format_vtt, parse_timecode
-from app.domain.enums import SubtitleAlignment, SubtitlePosition
+from app.domain.enums import SubtitleAlignment, SubtitlePosition, SubtitleSegmentationMode
 from app.domain.subtitle import SubtitleCue, SubtitleStyle
 from app.media.subtitles.formats import parse_srt, to_ass, to_srt, to_vtt
 from app.media.subtitles.segmentation import (
@@ -246,3 +246,94 @@ class TestSegmentation:
     def test_whitespace_only_segments_dropped(self):
         cues = cues_from_segments([TranscriptSegment(start=0.0, end=2.0, text="   ")])
         assert cues == []
+
+
+class TestSegmentationModes:
+    """One cue per complete sentence, fixed word counts, and user-chosen
+    word counts, as opposed to the default character-length cascade
+    exercised by ``TestSegmentation`` above."""
+
+    LONG_TEXT = "این یک جمله بسیار طولانی است. " * 6
+
+    def test_automatic_is_the_default_mode(self):
+        rules = SegmentationRules()
+        assert rules.mode == SubtitleSegmentationMode.AUTOMATIC
+
+    def test_sentence_mode_splits_on_sentence_boundaries(self):
+        text = "جمله اول است. جمله دوم است. جمله سوم است."
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.SENTENCE)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=9.0, text=text)], rules=rules
+        )
+        assert len(cues) == 3
+        assert cues[0].text == "جمله اول است."
+        assert cues[2].text == "جمله سوم است."
+
+    def test_sentence_mode_does_not_re_merge_short_sentences(self):
+        # AUTOMATIC would merge these back together via `_merge_tiny`; SENTENCE
+        # must not, since the user explicitly asked for one cue per sentence.
+        text = "بله. نه. شاید."
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.SENTENCE)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=3.0, text=text)], rules=rules
+        )
+        assert len(cues) == 3
+
+    def test_short_mode_uses_a_small_fixed_word_count(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.SHORT)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=30.0, text=self.LONG_TEXT)], rules=rules
+        )
+        assert len(cues) > 1
+        assert all(len(c.text.split()) <= 3 for c in cues)
+
+    def test_normal_mode_uses_a_larger_fixed_word_count(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.NORMAL)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=30.0, text=self.LONG_TEXT)], rules=rules
+        )
+        assert all(len(c.text.split()) <= 6 for c in cues)
+        # NORMAL packs more words per cue than SHORT for the same input.
+        short_cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=30.0, text=self.LONG_TEXT)],
+            rules=SegmentationRules(mode=SubtitleSegmentationMode.SHORT),
+        )
+        assert len(cues) <= len(short_cues)
+
+    def test_custom_mode_honours_exact_words_per_cue(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.CUSTOM, words_per_cue=1)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=30.0, text=self.LONG_TEXT)], rules=rules
+        )
+        assert all(len(c.text.split()) == 1 for c in cues[:-1])
+
+    def test_custom_mode_never_splits_mid_word(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.CUSTOM, words_per_cue=2)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=30.0, text=self.LONG_TEXT)], rules=rules
+        )
+        for c in cues:
+            for word in c.text.split():
+                assert word in self.LONG_TEXT
+
+    def test_fixed_word_count_modes_apply_no_overlaps_and_ordering(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.CUSTOM, words_per_cue=1)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=30.0, text=self.LONG_TEXT)], rules=rules
+        )
+        for earlier, later in zip(cues, cues[1:]):
+            assert earlier.end <= later.start + 1e-6
+        assert all(c.end > c.start for c in cues)
+
+    def test_modes_apply_to_untimed_text_source_too(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.CUSTOM, words_per_cue=1)
+        cues = cues_from_text(self.LONG_TEXT, 30.0, rules=rules)
+        assert all(len(c.text.split()) == 1 for c in cues[:-1])
+
+    def test_short_segment_still_kept_whole_in_sentence_mode(self):
+        rules = SegmentationRules(mode=SubtitleSegmentationMode.SENTENCE)
+        cues = cues_from_segments(
+            [TranscriptSegment(start=0.0, end=2.0, text="سلام دنیا")], rules=rules
+        )
+        assert len(cues) == 1
+        assert cues[0].text == "سلام دنیا"

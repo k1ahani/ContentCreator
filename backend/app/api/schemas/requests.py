@@ -20,6 +20,7 @@ from app.domain.enums import (
     ProjectStatus,
     SpeakingStyle,
     SubtitleFormat,
+    SubtitleSegmentationMode,
 )
 from app.domain.subtitle import SubtitleStyle
 
@@ -126,6 +127,12 @@ class GenerateSubtitleRequest(BaseModel):
     name: str | None = Field(default=None, max_length=200)
     duration_seconds: float | None = Field(default=None, ge=0)
     max_chars: int | None = Field(default=None, ge=10, le=400)
+    #: How cue boundaries are chosen. Defaults to AUTOMATIC (the original
+    #: character-length cascade) when omitted - see
+    #: app/media/subtitles/segmentation.py.
+    segmentation_mode: SubtitleSegmentationMode | None = None
+    #: Exact words per cue, used only when segmentation_mode is CUSTOM.
+    words_per_cue: int | None = Field(default=None, ge=1, le=20)
 
 
 class RenderSubtitleRequest(BaseModel):

@@ -5,6 +5,34 @@ and which docs were updated alongside it. Keep this current — it's the
 fastest way for a future agent to see what's actually shipped versus what the
 original requirements document merely asked for.
 
+## 1.2.0 — Subtitle segmentation modes + editor layout fix (2026-08-29)
+
+- `SubtitleEditorPage.tsx`: fixed the video preview overflowing the page and
+  the style panel dropping below the video on large screens. Root cause was
+  CSS Grid's `min-width: auto` default — the timeline's own wide, fixed-pixel
+  track div was setting the intrinsic minimum width of its whole grid column,
+  which both defeated the timeline's existing `overflow-x-auto` (nothing to
+  scroll if the column never shrinks) and inflated the video preview sized off
+  that same column. Fix was `min-w-0` on both grid-item columns, keeping the
+  `xl:grid-cols-[1fr_320px]` template so the style panel stays side-by-side on
+  large screens.
+- New `SubtitleSegmentationMode` (`sentence` / `automatic` / `short` /
+  `normal` / `custom`) controls how generated cue boundaries are chosen from a
+  transcript — a request-level choice (`GenerateSubtitleRequest.segmentation_mode`,
+  `words_per_cue` for `custom`), independent of the timed-vs-untimed timing
+  source. `automatic` is the pre-existing character-length cascade and stays
+  the default; the other four bypass it entirely (`short`=3 words/cue,
+  `normal`=6 words/cue, `custom`=user-chosen 1–20 words/cue, `sentence`=one
+  cue per complete sentence). `_merge_tiny` (re-combining implausibly short
+  cues) now only runs for `automatic`, since a short cue in any other mode is
+  the user's deliberate choice, not a defect. See `docs/SUBTITLE_SYSTEM.md`
+  for the full behaviour table.
+- "ساخت زیرنویس از رونوشت" dialog (`SubtitlesPage.tsx`) gained a mode picker
+  and a conditional word-count field for `custom`.
+- 10 new tests (284 → 294), covering all five modes against both timed
+  segments and untimed text, plus overlap/ordering and never-splits-mid-word
+  checks for the fixed-word-count modes.
+
 ## 1.1.0 — Second AI provider: OpenAI Codex (2026-08-29)
 
 Proves the provider abstraction from 1.0.0 was real rather than aspirational:

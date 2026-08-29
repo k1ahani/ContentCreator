@@ -234,6 +234,28 @@ class SubtitlePosition(StrEnum):
     BOTTOM = "bottom"
 
 
+class SubtitleSegmentationMode(StrEnum):
+    """How generated cue boundaries are chosen from a transcript.
+
+    Controls *only* subtitle generation (``app/media/subtitles/segmentation.py``)
+    - never touches manual timeline edits, which are always exact regardless
+    of what mode originally produced a cue.
+    """
+
+    #: One cue per complete sentence; never split mid-sentence.
+    SENTENCE = "sentence"
+    #: The original behaviour: sentence -> clause -> word-wrap cascade bounded
+    #: by a character-length target. The right default for most content.
+    AUTOMATIC = "automatic"
+    #: Fixed word count per cue, few words (fast-paced, social-media style).
+    SHORT = "short"
+    #: Fixed word count per cue, a comfortable reading amount.
+    NORMAL = "normal"
+    #: Fixed word count per cue, user-specified exactly (see
+    #: ``words_per_cue`` - as low as one word per cue, e.g. karaoke-style).
+    CUSTOM = "custom"
+
+
 # --------------------------------------------------------------------------
 # Text to speech
 # --------------------------------------------------------------------------

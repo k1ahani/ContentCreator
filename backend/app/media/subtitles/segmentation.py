@@ -10,10 +10,22 @@ Two inputs are supported, and the difference matters:
   distributed by character count. Honest but approximate; the UI says so, and
   the timeline editor exists to fix it.
 
-The readability rules encoded here are the standard broadcast ones: a cue
-should be short enough to read at a glance, last at least a beat, and never
-outstay its welcome. Splitting prefers a sentence boundary, then a clause
-boundary, then a word boundary - never mid-word.
+How a cue boundary is chosen is itself configurable
+(:class:`~app.domain.enums.SubtitleSegmentationMode`, ``rules.mode``):
+
+* ``AUTOMATIC`` (default) - the original behaviour: a character-length
+  cascade preferring a sentence boundary, then a clause boundary, then a word
+  boundary - never mid-word. The right default for most content.
+* ``SENTENCE`` - one cue per complete sentence, never split further.
+* ``SHORT`` / ``NORMAL`` / ``CUSTOM`` - a fixed number of words per cue
+  instead of a character budget (3 / 6 / ``rules.words_per_cue``
+  respectively) - useful for fast-paced or karaoke-style captioning, down to
+  one word per cue.
+
+Word-count and sentence modes are an explicit choice about chunk size, so
+:func:`cues_from_segments` skips its usual "merge cues that turned out too
+short to read" pass for them - re-merging a user's deliberate one-word cues
+back together would silently override the setting they just picked.
 """
 
 from __future__ import annotations
@@ -21,6 +33,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from app.domain.enums import SubtitleSegmentationMode
 from app.domain.subtitle import CueCreate
 from app.domain.transcription import TranscriptSegment
 
@@ -29,14 +42,23 @@ _SENTENCE_END = re.compile(r"[.!?۔؟]+[\s]*")
 #: Clause boundaries, Latin and Persian.
 _CLAUSE_BREAK = re.compile(r"[,;:،؛]+[\s]*")
 
+#: Words per cue for the two named fixed-count modes. CUSTOM instead reads
+#: ``SegmentationRules.words_per_cue`` directly - see ``_words_per_cue``.
+_NAMED_WORD_COUNTS: dict[SubtitleSegmentationMode, int] = {
+    SubtitleSegmentationMode.SHORT: 3,
+    SubtitleSegmentationMode.NORMAL: 6,
+}
+
 
 @dataclass(frozen=True, slots=True)
 class SegmentationRules:
     """Readability constraints applied when building cues."""
 
-    #: Longest cue text before it must be split.
+    #: Longest cue text before it must be split. Only consulted in
+    #: ``AUTOMATIC`` mode - the other modes have their own notion of "too long".
     max_chars: int = 84
-    #: Preferred single-line length; used when choosing a split point.
+    #: Preferred single-line length; used when choosing a split point in
+    #: ``AUTOMATIC`` mode.
     target_chars: int = 42
     #: A cue shorter than this is hard to notice.
     min_duration: float = 1.0
@@ -47,11 +69,69 @@ class SegmentationRules:
     max_chars_per_second: float = 21.0
     #: Gap left between consecutive cues so they do not visually collide.
     gap: float = 0.04
-    #: Segments shorter than this are merged into their neighbour.
+    #: Segments shorter than this are merged into their neighbour. Only
+    #: applied in ``AUTOMATIC`` mode - see the module docstring for why.
     merge_below: float = 0.8
+    #: Which strategy decides where a cue boundary falls.
+    mode: SubtitleSegmentationMode = SubtitleSegmentationMode.AUTOMATIC
+    #: Exact words per cue when ``mode`` is ``CUSTOM``. Clamped to at least 1;
+    #: ignored for every other mode.
+    words_per_cue: int | None = None
 
 
 DEFAULT_RULES = SegmentationRules()
+
+
+def _words_per_cue(rules: SegmentationRules) -> int:
+    """Resolve the target word count for a fixed-count mode."""
+    if rules.mode == SubtitleSegmentationMode.CUSTOM:
+        return max(1, rules.words_per_cue or 6)
+    return _NAMED_WORD_COUNTS.get(rules.mode, 6)
+
+
+def _is_fixed_word_count_mode(rules: SegmentationRules) -> bool:
+    return rules.mode in (
+        SubtitleSegmentationMode.SHORT,
+        SubtitleSegmentationMode.NORMAL,
+        SubtitleSegmentationMode.CUSTOM,
+    )
+
+
+def _chunk_text(text: str, rules: SegmentationRules) -> list[str]:
+    """Break ``text`` into cue-sized chunks per the configured mode."""
+    text = text.strip()
+    if not text:
+        return []
+
+    if rules.mode == SubtitleSegmentationMode.SENTENCE:
+        return _split_on(text, _SENTENCE_END)
+
+    if _is_fixed_word_count_mode(rules):
+        return _split_by_word_count(text, _words_per_cue(rules))
+
+    return _split_text(text, rules)
+
+
+def _needs_split(text: str, duration: float, rules: SegmentationRules) -> bool:
+    """Whether ``text`` (measured over ``duration`` seconds) exceeds this
+    mode's own notion of "one cue's worth" and must be chunked further."""
+    if rules.mode == SubtitleSegmentationMode.SENTENCE:
+        return len(_split_on(text, _SENTENCE_END)) > 1
+    if _is_fixed_word_count_mode(rules):
+        return len(text.split()) > _words_per_cue(rules)
+    return len(text) > rules.max_chars or duration > rules.max_duration
+
+
+def _split_by_word_count(text: str, words_per_cue: int) -> list[str]:
+    """Pack exactly ``words_per_cue`` words into each chunk (the last chunk
+    may have fewer). Never breaks a word - splits only on whitespace."""
+    words = text.split()
+    if not words:
+        return []
+    return [
+        " ".join(words[i : i + words_per_cue])
+        for i in range(0, len(words), words_per_cue)
+    ]
 
 
 def cues_from_segments(
@@ -66,12 +146,15 @@ def cues_from_segments(
         text = _normalise(segment.text)
         if not text:
             continue
-        if len(text) <= rules.max_chars and segment.duration <= rules.max_duration:
+        if not _needs_split(text, segment.duration, rules):
             cues.append(CueCreate(start=segment.start, end=segment.end, text=text))
             continue
         cues.extend(_split_segment(segment, text, rules))
 
-    cues = _merge_tiny(cues, rules)
+    # An explicit word-count/sentence choice is a deliberate chunk size;
+    # re-merging short results back together would silently undo it.
+    if rules.mode == SubtitleSegmentationMode.AUTOMATIC:
+        cues = _merge_tiny(cues, rules)
     return _enforce_timing(cues, rules)
 
 
@@ -82,7 +165,7 @@ def cues_from_text(
     rules: SegmentationRules = DEFAULT_RULES,
 ) -> list[CueCreate]:
     """Build cues from untimed text by distributing time across characters."""
-    chunks = _split_text(_normalise(text), rules)
+    chunks = _chunk_text(_normalise(text), rules)
     if not chunks:
         return []
 
@@ -108,7 +191,7 @@ def _split_segment(
     segment: TranscriptSegment, text: str, rules: SegmentationRules
 ) -> list[CueCreate]:
     """Split one over-long segment, keeping timings as accurate as possible."""
-    chunks = _split_text(text, rules)
+    chunks = _chunk_text(text, rules)
     if len(chunks) <= 1:
         return [CueCreate(start=segment.start, end=segment.end, text=text)]
 

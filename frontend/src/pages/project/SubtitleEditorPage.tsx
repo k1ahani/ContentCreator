@@ -158,8 +158,25 @@ export function SubtitleEditorPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        <div className="space-y-4">
+      {/*
+        `min-w-0` on both columns is the actual fix here, not the column
+        template. A `1fr` grid track (like `xl:grid-cols-[1fr_320px]` below)
+        defaults its item's `min-width` to `auto`, which means "never shrink
+        below my content's intrinsic minimum width" - and the timeline's
+        track div further down has an explicit pixel `width` (duration *
+        zoom, easily 1000px+) that becomes exactly that intrinsic minimum.
+        Without `min-w-0`, the grid item grows to fit it, which both defeats
+        the timeline's own `overflow-x-auto` (it never gets narrower than its
+        content, so there is nothing to scroll) and inflates the video
+        preview, whose sizing is a percentage of this same column - one
+        oversized ancestor, two symptoms. `min-w-0` lets the column shrink to
+        its assigned track width regardless of what is nested inside it, so
+        the timeline's own scroll container finally does the clipping it was
+        already built to do, and the video is sized against the real,
+        constrained column width.
+      */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+        <div className="min-w-0 space-y-4">
           <Card>
             <CardBody className="space-y-3">
               <Select value={assetId} onChange={(e) => setAssetId(e.target.value)}>
@@ -259,7 +276,7 @@ export function SubtitleEditorPage() {
           </Card>
         </div>
 
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <Card>
             <CardBody className="!p-0">
               <Tabs

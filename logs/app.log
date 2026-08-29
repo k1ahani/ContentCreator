@@ -330,3 +330,62 @@
 2026-08-29 15:03:08 INFO     [app.container] application ready (workers=2)
 2026-08-29 15:03:08 INFO     [app.main] listening on http://127.0.0.1:8420
 2026-08-29 15:03:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:31:43 WARNING  [app.jobs.queue] job 00tkjayv6o9zdeku failed: asset 'nonexistent' not found
+2026-08-29 17:31:44 WARNING  [app.jobs.queue] job 00tkjayw7ptlfpqs failed: no transcript text to build subtitles from
+2026-08-29 17:31:46 WARNING  [app.jobs.queue] job 00tkjayy53ooqxx6 failed: track '00tkjayy6w07qqoo' has no cues
+2026-08-29 17:32:26 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 17520)
+2026-08-29 17:33:25 WARNING  [app.jobs.queue] job 00tkjb1pdelyo9vo failed: asset 'nonexistent' not found
+2026-08-29 17:33:26 WARNING  [app.jobs.queue] job 00tkjb1q986b0x1h failed: no transcript text to build subtitles from
+2026-08-29 17:33:28 WARNING  [app.jobs.queue] job 00tkjb1s8nq2x7xl failed: track '00tkjb1s8v59xq70' has no cues
+2026-08-29 17:33:29 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 17:33:29 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 17:33:29 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 17:33:29 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 17:33:29 INFO     [app.container] application ready (workers=2)
+2026-08-29 17:33:29 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 17:33:30 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:33:43 INFO     [app.api.routers.projects] created project 00tkjb272o97eblr (تست)
+2026-08-29 17:33:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:34:07 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 16332)
+2026-08-29 17:34:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:34:10 INFO     [app.jobs.queue] queued job 00tkjb2y4ax3rklo (audio_extract)
+2026-08-29 17:34:10 INFO     [app.jobs.queue] running job 00tkjb2y4ax3rklo (audio_extract)
+2026-08-29 17:34:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:34:11 INFO     [app.media.audio] extracting audio: followups.mp4 -> followups.ogg (preset=opus, duration=78.1s)
+2026-08-29 17:34:12 INFO     [app.jobs.queue] job 00tkjb2y4ax3rklo completed in 1.7s
+2026-08-29 17:34:28 INFO     [app.jobs.queue] queued job 00tkjb3g8m4ke39j (transcribe)
+2026-08-29 17:34:28 INFO     [app.jobs.queue] running job 00tkjb3g8m4ke39j (transcribe)
+2026-08-29 17:34:28 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'medium'
+2026-08-29 17:34:41 INFO     [app.transcription.providers.faster_whisper_provider] model 'medium' ready in 13.7s
+2026-08-29 17:34:42 INFO     [faster_whisper] Processing audio with duration 01:18.112
+2026-08-29 17:34:43 INFO     [faster_whisper] VAD filter removed 00:00.656 of audio
+2026-08-29 17:37:03 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 17:37:03 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 17:37:03 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 17:37:03 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 17:37:03 INFO     [app.container] marked 1 interrupted job(s) as failed
+2026-08-29 17:37:03 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 17:37:03 INFO     [app.container] application ready (workers=2)
+2026-08-29 17:37:03 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 17:37:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:37:12 INFO     [app.services.settings] updated 3 setting(s): ['transcription.auto_refine', 'transcription.model_size', 'transcription.vad_filter']
+2026-08-29 17:37:16 INFO     [app.api.routers.projects] created project 00tkjb842bsnb1vq (seg-mode-test)
+2026-08-29 17:37:16 INFO     [app.jobs.queue] queued job 00tkjb8408fk7eo1 (subtitle_generate)
+2026-08-29 17:37:16 INFO     [app.jobs.queue] running job 00tkjb8408fk7eo1 (subtitle_generate)
+2026-08-29 17:37:16 INFO     [app.jobs.queue] job 00tkjb8408fk7eo1 completed in 0.0s
+2026-08-29 17:37:32 INFO     [app.api.routers.projects] created project 00tkjb8k61x0btyx (seg-mode-test)
+2026-08-29 17:37:32 INFO     [app.jobs.queue] queued job 00tkjb8k55n2v0ka (subtitle_generate)
+2026-08-29 17:37:32 INFO     [app.jobs.queue] running job 00tkjb8k55n2v0ka (subtitle_generate)
+2026-08-29 17:37:32 INFO     [app.jobs.queue] job 00tkjb8k55n2v0ka completed in 0.0s
+2026-08-29 17:37:32 INFO     [app.jobs.queue] queued job 00tkjb8k9v2o9d84 (subtitle_generate)
+2026-08-29 17:37:32 INFO     [app.jobs.queue] running job 00tkjb8k9v2o9d84 (subtitle_generate)
+2026-08-29 17:37:32 INFO     [app.jobs.queue] job 00tkjb8k9v2o9d84 completed in 0.0s
+2026-08-29 17:37:33 INFO     [app.jobs.queue] queued job 00tkjb8l65klh0vp (subtitle_generate)
+2026-08-29 17:37:33 INFO     [app.jobs.queue] running job 00tkjb8l65klh0vp (subtitle_generate)
+2026-08-29 17:37:33 INFO     [app.jobs.queue] job 00tkjb8l65klh0vp completed in 0.0s
+2026-08-29 17:37:33 INFO     [app.jobs.queue] queued job 00tkjb8l9eqppp2v (subtitle_generate)
+2026-08-29 17:37:33 INFO     [app.jobs.queue] running job 00tkjb8l9eqppp2v (subtitle_generate)
+2026-08-29 17:37:33 INFO     [app.jobs.queue] job 00tkjb8l9eqppp2v completed in 0.0s
+2026-08-29 17:37:33 INFO     [app.jobs.queue] queued job 00tkjb8l6tm2ypdh (subtitle_generate)
+2026-08-29 17:37:33 INFO     [app.jobs.queue] running job 00tkjb8l6tm2ypdh (subtitle_generate)
+2026-08-29 17:37:33 INFO     [app.jobs.queue] job 00tkjb8l6tm2ypdh completed in 0.0s

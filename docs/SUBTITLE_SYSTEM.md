@@ -62,7 +62,36 @@ maximum ~21 characters/second reading speed (dense text gets its duration
 extended to stay readable), and a small gap enforced between consecutive cues.
 Splitting prefers a sentence boundary, then a clause boundary (Persian و Latin
 punctuation both recognised), then a word boundary — **never mid-word**, in
-either script.
+either script. This character-length cascade is what `AUTOMATIC` mode below
+uses; the other four modes bypass it.
+
+### Segmentation mode
+
+`SubtitleSegmentationMode` (`app/domain/enums.py`) chooses *how* cue
+boundaries are picked, independent of the timed-vs-untimed distinction above —
+it applies equally to `cues_from_segments` and `cues_from_text`. Selected per
+generation request (`GenerateSubtitleRequest.segmentation_mode`, plumbed
+through `_rules_from_settings` in `app/jobs/handlers/subtitle_generate.py`);
+omitted, it defaults to `AUTOMATIC`.
+
+| Mode | Behaviour |
+| --- | --- |
+| `sentence` | One cue per complete sentence (`_split_on(text, _SENTENCE_END)`), never split further regardless of length. |
+| `automatic` | The character-length cascade described above — the original, and still the default. |
+| `short` | Fixed 3 words per cue. |
+| `normal` | Fixed 6 words per cue. |
+| `custom` | Fixed `words_per_cue` (1–20, from the request) words per cue — e.g. one word per cue for a karaoke-style track. |
+
+`short`/`normal`/`custom` all go through `_split_by_word_count`, which packs
+exactly N words per chunk (`words[i:i+n]`) and never breaks a word. A mode-aware
+`_needs_split` decides whether a segment needs splitting at all, replacing the
+old hardcoded character/duration check.
+
+**Why `_merge_tiny` (which recombines cues that end up implausibly short) only
+runs for `AUTOMATIC`.** For every other mode, a "too short" cue is exactly
+what the user asked for — silently re-merging a sentence-mode cue or a
+one-word `custom` cue back together would defeat the whole point of choosing
+that mode.
 
 ## Styling: one model drives two renderers
 

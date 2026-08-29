@@ -89,11 +89,11 @@ cd backend
 .venv\Scripts\python.exe -m pytest
 ```
 
-۲۸۰+ آزمون واحد و یکپارچه‌سازی وجود دارد که روی FFmpeg، پایگاه‌داده SQLite و
+۲۹۰+ آزمون واحد و یکپارچه‌سازی وجود دارد که روی FFmpeg، پایگاه‌داده SQLite و
 (در صورت در دسترس بودن) Claude CLI و Codex CLI واقعی اجرا می‌شوند — هیچ‌کدام mock
 نیستند.
 
-280+ unit and integration tests exist and run against real FFmpeg, a real
+290+ unit and integration tests exist and run against real FFmpeg, a real
 SQLite database, and (when available) the real Claude and Codex CLIs — nothing
 is mocked.
 

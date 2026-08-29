@@ -51,6 +51,12 @@ export type Language = "fa" | "en";
 export type SubtitleFormat = "srt" | "vtt" | "ass";
 export type SubtitleAlignment = "left" | "center" | "right";
 export type SubtitlePosition = "top" | "middle" | "bottom";
+export type SubtitleSegmentationMode =
+  | "sentence"
+  | "automatic"
+  | "short"
+  | "normal"
+  | "custom";
 
 export type VoiceGender = "male" | "female" | "unknown";
 export type VoiceAge = "young" | "adult" | "mature" | "unknown";

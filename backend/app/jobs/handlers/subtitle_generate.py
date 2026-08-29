@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from app.core.errors import NotFoundError, ValidationError
 from app.core.logging import get_logger
-from app.domain.enums import AssetType, JobType, Language
+from app.domain.enums import AssetType, JobType, Language, SubtitleSegmentationMode
 from app.domain.subtitle import TrackCreate
 from app.domain.transcription import TranscriptSegment
 from app.jobs.context import JobContext
@@ -38,8 +38,10 @@ def handle_subtitle_generate(ctx: JobContext) -> dict:
 
     Input:  ``document_id`` or ``text``; optional ``segments``, ``job_id``
             (a transcribe job to take segments from), ``language``, ``name``,
-            ``duration_seconds``, ``track_id`` (regenerate into an existing track)
-    Output: ``track_id``, ``cue_count``, ``timing_source``
+            ``duration_seconds``, ``track_id`` (regenerate into an existing
+            track), ``segmentation_mode`` (sentence/automatic/short/normal/
+            custom, default automatic), ``words_per_cue`` (custom mode only)
+    Output: ``track_id``, ``cue_count``, ``timing_source``, ``segmentation_mode``
     """
     settings = ctx.services.settings
     rules = _rules_from_settings(ctx)
@@ -52,6 +54,8 @@ def handle_subtitle_generate(ctx: JobContext) -> dict:
     text, source_document_id = _resolve_text(ctx)
 
     ctx.set_progress(0.1, "در حال ساخت قطعه‌های زیرنویس")
+    mode_detail = f", {rules.words_per_cue} کلمه در هر قطعه" if rules.words_per_cue else ""
+    ctx.system(f"segmentation mode: {rules.mode.value}{mode_detail}")
 
     if segments:
         cues = cues_from_segments(segments, rules=rules)
@@ -110,6 +114,7 @@ def handle_subtitle_generate(ctx: JobContext) -> dict:
         "track_id": track.id,
         "cue_count": len(saved),
         "timing_source": timing_source,
+        "segmentation_mode": rules.mode.value,
         "language": language.value,
         "duration_seconds": round(total, 3),
         "source_document_id": source_document_id,
@@ -123,11 +128,26 @@ def handle_subtitle_generate(ctx: JobContext) -> dict:
 
 def _rules_from_settings(ctx: JobContext) -> SegmentationRules:
     settings = ctx.services.settings
+
+    mode_input = ctx.input.get("segmentation_mode")
+    try:
+        mode = SubtitleSegmentationMode(mode_input) if mode_input else SubtitleSegmentationMode.AUTOMATIC
+    except ValueError as exc:
+        raise ValidationError(
+            f"unknown segmentation mode: {mode_input!r}",
+            user_message="نوع قطعه‌بندی انتخاب‌شده معتبر نیست.",
+            details={"valid": [m.value for m in SubtitleSegmentationMode]},
+        ) from exc
+
+    words_per_cue = ctx.input.get("words_per_cue")
+
     return SegmentationRules(
         max_chars=int(ctx.input.get("max_chars") or settings.get("subtitle.max_chars")),
         target_chars=int(settings.get("subtitle.target_chars")),
         min_duration=float(settings.get("subtitle.min_duration")),
         max_duration=float(settings.get("subtitle.max_duration")),
+        mode=mode,
+        words_per_cue=int(words_per_cue) if words_per_cue else None,
     )
 
 
