@@ -3,8 +3,9 @@
 ## Purpose
 
 Turns "run an AI task on some text" into a normalised call, regardless of
-which provider ends up executing it. This is the layer that makes "Claude
-only in v1, GPT later without a rewrite" true rather than aspirational.
+which provider ends up executing it. This is the layer that made adding a
+second provider - OpenAI Codex, alongside Claude - a real, contained change
+rather than a rewrite; see `docs/AI_PROVIDERS.md` for both implementations.
 
 ## Why transcription and TTS are NOT part of this layer
 

@@ -5,6 +5,48 @@ and which docs were updated alongside it. Keep this current — it's the
 fastest way for a future agent to see what's actually shipped versus what the
 original requirements document merely asked for.
 
+## 1.1.0 — Second AI provider: OpenAI Codex (2026-08-29)
+
+Proves the provider abstraction from 1.0.0 was real rather than aspirational:
+a second text-generation provider, driven through OpenAI's official Codex CLI
+(`npm install -g @openai/codex`), registered alongside Claude with zero
+changes to `AIService`, the job handlers, or the recommendation engine.
+
+- `app/ai/providers/codex/` - detection, CLI wrapper, provider implementation,
+  following the exact same shape as the Claude integration. Verified against
+  a real install (`codex-cli 0.150.1`) during development; see
+  `docs/CLI_INTEGRATION.md` for what was confirmed directly versus what could
+  not be (no valid Codex credentials were available - the design routes
+  around that gap rather than assuming past it, most notably by reading the
+  answer from `-o/--output-last-message` instead of an unverified JSONL
+  success-event schema).
+- Availability checking uses `codex login status` (fast, local, confirmed
+  ~0.2s) rather than a live call - an unauthenticated `codex exec` was
+  measured taking ~35-40 seconds to fail, which would have made the provider
+  selector feel broken.
+- Settings -> AI gained a real provider picker (segmented control, live
+  availability per provider, both CLI-path fields always visible) instead of
+  Claude being the only implicit option. Switching providers resets the
+  default-model field, since a model id from one provider is not valid for
+  the other.
+- `ModelSelector.tsx`, used throughout the feature pages, now follows the
+  user's configured default provider when a caller does not pin one
+  explicitly - choosing Codex in Settings actually changes what every page
+  recommends, not just the Settings page's own preview.
+- `app/ai/models.py` gained a single `codex-default` registry entry rather
+  than a list of named Codex model snapshots - see `docs/AI_MODELS.md` for
+  why (Codex's own reported default model name during testing did not match
+  common assumptions about current OpenAI product naming, which is direct
+  evidence a hardcoded list would already be wrong).
+- Docs updated: `AI_PROVIDERS.md`, `CLI_INTEGRATION.md` (broadened to cover
+  both CLIs), `AI_MODELS.md`, `SETTINGS.md`, `EXTENDING_THE_APPLICATION.md`.
+- 24 new tests (260 → 284), including a live-but-skippable suite
+  (`TestCodexProviderLive`) that asserts the availability check stays fast
+  against the real installed CLI.
+- A new top-level `README.fa.md` - a comprehensive, fully Persian guide aimed
+  at public GitHub visitors (features, prerequisites, install, configuration,
+  troubleshooting), linked from `README.md` and from `docs/DEVELOPMENT_GUIDE.md`.
+
 ## 1.0.0 — Initial platform (2026-08-29)
 
 First production-ready version. Every feature in the acceptance criteria is

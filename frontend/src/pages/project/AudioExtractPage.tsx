@@ -44,7 +44,7 @@ export function AudioExtractPage() {
   const runner = useJobRunner((job) => {
     toast.success("استخراج صدا با موفقیت انجام شد");
     void job;
-  });
+  }, `cca:job:${projectId}:audio_extract`);
 
   const extract = () => {
     if (!selected) return;

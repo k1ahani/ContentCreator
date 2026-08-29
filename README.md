@@ -2,6 +2,16 @@
 
 # Local AI Content Creator Platform
 
+📖 **[راهنمای کامل و جامع فارسی این پروژه در `README.fa.md`](README.fa.md)** — این
+فایل خلاصه دوزبانه است؛ نسخه فارسی هر آنچه برای نصب، پیکربندی و استفاده لازم است را
+با جزئیات کامل پوشش می‌دهد.
+
+**[Full comprehensive Persian guide → `README.fa.md`](README.fa.md)** — this file is
+a bilingual summary; the Persian version covers installation, configuration and usage
+in full detail.
+
+---
+
 یک پلتفرم حرفه‌ای و محلی برای تولید محتوا: استخراج صدا از ویدیو، تبدیل گفتار به متن،
 ویرایش و ترجمه متن با هوش مصنوعی، ساخت و ویرایش زیرنویس با تایم‌لاین، و تبدیل متن به
 گفتار طبیعی. رابط کاربری کاملاً فارسی و راست‌به‌چپ (RTL) است و همه‌چیز به‌صورت محلی و
@@ -21,7 +31,7 @@ is fully Persian/RTL. Everything runs on your own machine — there is no login.
 | Windows | 10/11 | این پلتفرم فقط برای ویندوز طراحی شده است |
 | [uv](https://docs.astral.sh/uv/) | latest | مدیریت محیط پایتون؛ اگر نصب نباشد، `setup.ps1` آن را نصب می‌کند |
 | Node.js | 20+ | برای ساخت رابط کاربری |
-| [Claude CLI](https://claude.com/claude-code) | latest | برای تمام ویژگی‌های هوش مصنوعی (ویرایش، ترجمه، بازبینی رونوشت) |
+| [Claude CLI](https://claude.com/claude-code) **or** [Codex CLI](https://www.npmjs.com/package/@openai/codex) | latest | حداقل یکی الزامی؛ برای ویرایش، ترجمه و بازبینی رونوشت — قابل انتخاب از تنظیمات |
 | FFmpeg | — | نیازی به نصب دستی نیست؛ `setup.ps1` یک نسخه ایستا دانلود می‌کند |
 
 پایتون سیستمی لازم نیست — `uv` نسخه ۳.۱۲ پین‌شده را خودش فراهم می‌کند.
@@ -50,11 +60,13 @@ A system-wide Python install is not required — `uv` provisions a pinned 3.12.
 پس از اجرای موفق، `start.bat` بک‌اند را اجرا می‌کند (که فرانت‌اند ساخته‌شده را نیز
 سرو می‌کند)، منتظر آماده‌شدن آن می‌ماند و مرورگر را باز می‌کند.
 
-Claude CLI باید جداگانه نصب و وارد حساب شده باشد. اگر به‌طور خودکار شناسایی نشد،
-مسیر آن را از صفحه «تنظیمات ← هوش مصنوعی» وارد کنید.
+Claude CLI یا Codex CLI (حداقل یکی) باید جداگانه نصب و وارد حساب شده باشد. اگر
+به‌طور خودکار شناسایی نشد، مسیر آن را از صفحه «تنظیمات ← هوش مصنوعی» وارد کنید — از
+همان‌جا می‌توانید ارائه‌دهنده فعال و مدل پیش‌فرض هر کار را نیز انتخاب کنید.
 
-The Claude CLI must be installed and logged in separately; if it is not
-auto-detected, set its path from Settings → AI.
+At least one of the Claude CLI or Codex CLI must be installed and logged in
+separately; if not auto-detected, set its path from Settings → AI, which is
+also where the active provider and per-task default models are chosen.
 
 ---
 
@@ -77,11 +89,13 @@ cd backend
 .venv\Scripts\python.exe -m pytest
 ```
 
-۲۶۰+ آزمون واحد و یکپارچه‌سازی وجود دارد که روی FFmpeg، پایگاه‌داده SQLite و
-(در صورت در دسترس بودن) Claude CLI واقعی اجرا می‌شوند — هیچ‌کدام mock نیستند.
+۲۸۰+ آزمون واحد و یکپارچه‌سازی وجود دارد که روی FFmpeg، پایگاه‌داده SQLite و
+(در صورت در دسترس بودن) Claude CLI و Codex CLI واقعی اجرا می‌شوند — هیچ‌کدام mock
+نیستند.
 
-260+ unit and integration tests exist and run against real FFmpeg, a real
-SQLite database, and (when available) the real Claude CLI — nothing is mocked.
+280+ unit and integration tests exist and run against real FFmpeg, a real
+SQLite database, and (when available) the real Claude and Codex CLIs — nothing
+is mocked.
 
 ---
 
@@ -91,7 +105,7 @@ SQLite database, and (when available) the real Claude CLI — nothing is mocked.
 ContentCreatorApp/
 ├── backend/          FastAPI + Python 3.12
 │   └── app/
-│       ├── ai/               provider-neutral AI layer (Claude today, GPT-ready)
+│       ├── ai/               provider-neutral AI layer (Claude + OpenAI Codex)
 │       ├── transcription/    speech-recognition layer (local Whisper)
 │       ├── tts/               text-to-speech layer (Edge neural, SAPI5 offline)
 │       ├── media/            FFmpeg integration, audio, subtitles, video
@@ -134,7 +148,7 @@ To add a capability, start at `docs/EXTENDING_THE_APPLICATION.md`.
 | مشکل / Issue | راه‌حل / Fix |
 |---|---|
 | «FFmpeg پیدا نشد» | `.\scripts\setup.ps1` را دوباره اجرا کنید، یا مسیر را در تنظیمات وارد کنید |
-| «Claude CLI پیدا نشد» | نصب و ورود به حساب را با دستور `claude` در ترمینال بررسی کنید |
+| «Claude CLI پیدا نشد» یا «Codex CLI پیدا نشد» | نصب و ورود به حساب را با دستور `claude` یا `codex login status` در ترمینال بررسی کنید |
 | «موتور تبدیل گفتار به متن نصب نشده» | `.\scripts\install_asr.ps1` را اجرا کنید |
 | صفحه اصلی خالی/۵۰۳ نمایش می‌دهد | در پوشه `frontend`: `npm install && npm run build` |
 | درگاه (port) در دسترس نیست | ویندوز محدوده‌هایی از پورت‌ها را برای Hyper-V رزرو می‌کند؛ برنامه به‌طور خودکار پورت آزاد بعدی را پیدا می‌کند — پورت واقعی در `logs\app.log` ثبت می‌شود |

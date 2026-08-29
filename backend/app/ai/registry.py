@@ -4,13 +4,17 @@ Holds the provider instances the application knows about and answers "which
 providers exist and can they run right now?".
 
 **Adding a provider is a two-line change here.** Import it and add it to
-``_build_providers``. Everything else - the selector in the UI, the model
-list, task routing - follows from the interface. A provider whose tool is not
-installed still appears in the registry; it reports ``available=False`` so the
-UI can grey it out with a reason instead of failing at execution time.
+``build``. Everything else - the selector in the UI, the model list, task
+routing - follows from the interface. A provider whose tool is not installed,
+or not logged in, still appears in the registry; it reports
+``available=False`` with a Persian reason so the UI can grey it out instead of
+failing at execution time.
 
-Version 1 registers Claude only. GPT is deliberately *not* listed: an option
-the user can pick that then fails would be a fake feature.
+Two providers ship: Claude and OpenAI Codex, both driven through their local
+CLIs (see ``docs/AI_PROVIDERS.md`` and ``docs/CLI_INTEGRATION.md``). Which one
+executes a given task is never hardcoded here - see
+``app/services/settings.py``'s ``ai.provider`` default and
+``AIService.resolve_provider_id``.
 """
 
 from __future__ import annotations
@@ -20,6 +24,7 @@ import time
 
 from app.ai.base import AIProvider
 from app.ai.providers.claude import ClaudeProvider
+from app.ai.providers.codex import CodexProvider
 from app.core.errors import ProviderNotFoundError
 from app.core.logging import get_logger
 from app.domain.ai import ProviderInfo
@@ -43,15 +48,21 @@ class ProviderRegistry:
     # -- construction ------------------------------------------------------
 
     @classmethod
-    def build(cls, *, claude_cli_path: str | None = None, timeout: int = 900) -> "ProviderRegistry":
+    def build(
+        cls,
+        *,
+        claude_cli_path: str | None = None,
+        codex_cli_path: str | None = None,
+        timeout: int = 900,
+    ) -> "ProviderRegistry":
         """Create the registry for this application.
 
-        When adding a provider, construct it here alongside ClaudeProvider.
+        When adding a provider, construct it here alongside the existing ones.
         """
         return cls(
             [
                 ClaudeProvider(configured_path=claude_cli_path, timeout=timeout),
-                # GPTProvider(api_key=...),   <- future, see docs
+                CodexProvider(configured_path=codex_cli_path, timeout=timeout),
             ]
         )
 

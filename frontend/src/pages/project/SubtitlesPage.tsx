@@ -6,12 +6,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Plus, Subtitles as SubtitlesIcon, Clock, ArrowLeft } from "lucide-react";
+import { Plus, Subtitles as SubtitlesIcon, Clock, Trash2 } from "lucide-react";
 import { useProject } from "@/hooks/useProject";
 import { documentsApi, jobsApi, subtitlesApi } from "@/lib/api/resources";
 import { useJobRunner } from "@/hooks/useJobRunner";
 import { Card, CardBody, Button, Dialog, Field, Select, EmptyState, Badge, toast } from "@/components/ui";
 import { formatDuration, formatRelativeTime } from "@/lib/format";
+import { ApiError } from "@/lib/api/client";
 import type { Language } from "@/lib/api/types";
 
 export function SubtitlesPage() {
@@ -39,6 +40,15 @@ export function SubtitlesPage() {
     queryClient.invalidateQueries({ queryKey: ["subtitleTracks", projectId] });
     setGenerateOpen(false);
     toast.success("زیرنویس ساخته شد");
+  }, `cca:job:${projectId}:subtitle_generate`);
+
+  const deleteTrackMutation = useMutation({
+    mutationFn: (trackId: string) => subtitlesApi.deleteTrack(projectId, trackId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["subtitleTracks", projectId] });
+      toast.success("زیرنویس حذف شد");
+    },
+    onError: (err) => toast.error(err instanceof ApiError ? err.message : "خطا در حذف زیرنویس"),
   });
 
   const generate = () => {
@@ -79,17 +89,14 @@ export function SubtitlesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {tracks.items.map((track) => (
-            <Link key={track.id} to={track.id}>
-              <Card className="transition-colors hover:border-brand-300 dark:hover:border-brand-800">
+            <Card key={track.id} className="relative transition-colors hover:border-brand-300 dark:hover:border-brand-800">
+              <Link to={track.id} className="block">
                 <CardBody>
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                        {track.name || "بدون نام"}
-                      </h3>
-                      <Badge tone="neutral">{track.language === "fa" ? "فارسی" : "English"}</Badge>
-                    </div>
-                    <ArrowLeft size={16} className="mt-1 shrink-0 text-slate-300 dark:text-slate-700" />
+                  <div className="pe-8">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      {track.name || "بدون نام"}
+                    </h3>
+                    <Badge tone="neutral">{track.language === "fa" ? "فارسی" : "English"}</Badge>
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-xs text-slate-400">
                     <span className="flex items-center gap-1">
@@ -100,8 +107,21 @@ export function SubtitlesPage() {
                     <span className="me-auto">{formatRelativeTime(track.updated_at)}</span>
                   </div>
                 </CardBody>
-              </Card>
-            </Link>
+              </Link>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (confirm(`زیرنویس «${track.name || "بدون نام"}» حذف شود؟ این عملیات قابل بازگشت نیست.`)) {
+                    deleteTrackMutation.mutate(track.id);
+                  }
+                }}
+                title="حذف زیرنویس"
+                className="absolute end-3 top-3 rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400"
+              >
+                <Trash2 size={15} />
+              </button>
+            </Card>
           ))}
         </div>
       )}

@@ -7,12 +7,17 @@
  * caller's job (see SettingsPage's "ai.model_by_task").
  *
  * No model id is ever hardcoded: everything renders from
- * `GET /api/ai/recommend`, which is backed by the model registry.
+ * `GET /api/ai/recommend`, which is backed by the model registry. Which
+ * *provider* it recommends from is likewise never hardcoded here - when the
+ * caller does not pin one explicitly, this reads the user's own default
+ * (Settings -> AI -> "ارائه‌دهنده هوش مصنوعی"), so choosing Codex there
+ * actually changes what every feature page recommends, not just what the
+ * Settings page itself shows.
  */
 
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { aiApi } from "@/lib/api/resources";
+import { aiApi, settingsApi } from "@/lib/api/resources";
 import type { AITaskType } from "@/lib/api/types";
 import { Skeleton } from "@/components/ui";
 
@@ -22,20 +27,34 @@ const tierLabel: Record<string, string> = {
   powerful: "قدرتمند",
 };
 
+const providerLabel: Record<string, string> = {
+  claude: "Claude",
+  codex: "OpenAI Codex",
+};
+
 export function ModelSelector({
   task,
   value,
   onChange,
-  provider = "claude",
+  provider,
 }: {
   task: AITaskType;
   value: string | null;
   onChange: (modelId: string) => void;
+  /** Pin a specific provider; omit to follow the user's configured default. */
   provider?: string;
 }) {
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: settingsApi.get,
+    enabled: provider === undefined,
+  });
+  const effectiveProvider = provider ?? String(settings?.values["ai.provider"] ?? "claude");
+
   const { data, isLoading } = useQuery({
-    queryKey: ["recommend", task, provider],
-    queryFn: () => aiApi.recommend(task, provider),
+    queryKey: ["recommend", task, effectiveProvider],
+    queryFn: () => aiApi.recommend(task, effectiveProvider),
+    enabled: provider !== undefined || settings !== undefined,
   });
 
   const [manualOpen, setManualOpen] = useState(false);
@@ -62,6 +81,9 @@ export function ModelSelector({
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
             {isRecommended ? "مدل پیشنهادی" : "مدل انتخابی"}
+          </span>
+          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+            {providerLabel[effectiveProvider] ?? effectiveProvider}
           </span>
           {isRecommended && (
             <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-300">

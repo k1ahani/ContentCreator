@@ -139,6 +139,7 @@ class ServiceContainer:
                 settings = SettingsService(SettingsRepository(self.db))
                 self._providers = ProviderRegistry.build(
                     claude_cli_path=settings.claude_cli_path,
+                    codex_cli_path=settings.codex_cli_path,
                     timeout=int(settings.get("ai.timeout_seconds")),
                 )
             return self._providers

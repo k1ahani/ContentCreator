@@ -42,11 +42,34 @@ Settings page renders as tabs (`frontend/src/pages/SettingsPage.tsx`,
 | Section | Covers |
 |---|---|
 | `general` | workspace directory, import size limit, allowed import roots, theme |
-| `ai` | provider, Claude CLI path, default model, per-task model preferences, timeout |
+| `ai` | active provider (Claude/Codex), each provider's CLI path, default model, per-task model preferences, timeout |
 | `transcription` | engine, model size, language, VAD filter, auto-refine |
 | `media` | FFmpeg path, default audio preset, default render quality |
 | `subtitle` | style (font/color/position/etc.), segmentation limits, export format |
 | `voice` | provider, language, default voice, style, rate, pitch, output format |
+
+### The AI provider picker
+
+`ai` is the one section whose form has real cross-field behaviour, not just a
+flat list of independent inputs. `AiSection` in `SettingsPage.tsx` renders a
+segmented picker built from `GET /api/ai/providers` - never a hardcoded
+Claude/Codex pair - each option showing live availability, so a provider that
+is not installed or not logged in is visibly distinguishable before the user
+picks it. Switching the selected provider (`ai.provider`) resets
+`ai.default_model` to empty in the same local edit, because a model id valid
+for one provider is not a valid `-m`/model argument for the other; the "مدل
+پیش‌فرض" dropdown itself is re-fetched scoped to whichever provider is
+currently selected (`GET /api/ai/models?provider=...`), so it can never offer
+an id that would not resolve for that provider. Both providers' CLI-path
+fields are shown at all times, not only the active one's, so switching back
+and forth never loses a path the user already entered for the other.
+
+`frontend/src/components/ai/ModelSelector.tsx` - the "مدل پیشنهادی" panel
+used throughout the feature pages, not just Settings - reads this same
+`ai.provider` value as its default when a caller does not pin a specific
+provider explicitly. That is what makes choosing Codex here actually change
+what every page recommends, rather than only affecting the Settings page's
+own preview.
 
 Adding a setting to an existing section needs no frontend change beyond a new
 field in that section's form — the tab structure and the save mechanism are
@@ -81,7 +104,8 @@ the settings PUT/reset endpoints, drops cached objects that depend on the
 changed keys:
 
 - any `ai.*` key rebuilds the AI facade, provider registry and model registry
-  (so a new Claude CLI path or timeout takes effect on the very next AI call);
+  (so a new Claude or Codex CLI path, a provider switch, or a new timeout
+  takes effect on the very next AI call — no restart needed);
 - any `media.*` key clears the FFmpeg locator cache;
 - `transcription.*` / `voice.*` invalidate the corresponding provider
   registry's availability cache.
@@ -94,9 +118,10 @@ showing a saved path that nothing is actually using yet.
 
 `SettingsService` exposes a few typed convenience properties beyond the raw
 `get`/`set` dict interface — `subtitle_style` (returns a real `SubtitleStyle`
-model), `model_preferences`, `claude_cli_path`, `ffmpeg_path`,
-`max_import_bytes`, `allowed_import_roots`. Prefer these over calling
-`.get("subtitle.style")` and constructing the model yourself at every call
+model), `model_preferences`, `claude_cli_path`, `codex_cli_path`,
+`ffmpeg_path`, `max_import_bytes`, `allowed_import_roots`. Prefer these over
+calling `.get("subtitle.style")` and constructing the model yourself at every
+call
 site.
 
 ## Adding a setting

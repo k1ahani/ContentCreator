@@ -3,6 +3,12 @@
 How to work on this codebase, whether you're a human or an AI coding agent
 picking this project back up in a future session.
 
+Looking for the user-facing guide instead - what this platform does,
+prerequisites, installation, configuration? That's
+[`README.fa.md`](../README.fa.md) (Persian, comprehensive) or
+[`README.md`](../README.md) (bilingual summary) at the project root. This
+document and the rest of `docs/` are for people changing the code itself.
+
 ## Read the docs before you touch a subsystem
 
 This is a convention, not a suggestion. Before modifying an area, read its

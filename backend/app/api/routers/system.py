@@ -70,27 +70,50 @@ def system_status(container: Container) -> SystemStatusResponse:
         )
     )
 
-    # -- Claude CLI (required for AI features) -----------------------------
-    provider_info = next(
-        (info for info in container.ai.list_providers() if info.id == "claude"), None
-    )
+    # -- AI text providers ---------------------------------------------------
+    #
+    # No single provider is individually required any more now that Codex
+    # exists alongside Claude - a user with only one of the two configured is
+    # fully functional. Each provider is therefore listed informationally
+    # (required=False), and a separate synthetic entry captures the real
+    # requirement: *at least one* must be available for AI features to work
+    # at all. This is what should gate `ready`, not any specific provider's
+    # id - hardcoding one here would misreport a Codex-only setup as broken.
+    ai_providers = container.ai.list_providers()
+    for info in ai_providers:
+        dependencies.append(
+            DependencyStatus(
+                id=f"ai_{info.id}",
+                label_fa=info.display_name,
+                available=info.available,
+                required=False,
+                version=info.version,
+                path=info.executable_path,
+                detail_fa=(
+                    "برای ویرایش، ترجمه و بازبینی متن قابل استفاده است."
+                    if info.available
+                    else info.unavailable_reason
+                ),
+                hint_fa=None if info.available else f"مسیر آن را در «تنظیمات ← هوش مصنوعی» بررسی کنید.",
+            )
+        )
+
+    any_ai_available = any(info.available for info in ai_providers)
     dependencies.append(
         DependencyStatus(
-            id="claude_cli",
-            label_fa="Claude CLI",
-            available=bool(provider_info and provider_info.available),
+            id="ai_provider",
+            label_fa="دسترسی به هوش مصنوعی",
+            available=any_ai_available,
             required=True,
-            version=provider_info.version if provider_info else None,
-            path=provider_info.executable_path if provider_info else None,
             detail_fa=(
-                "برای ویرایش، ترجمه و بازبینی متن استفاده می‌شود."
-                if provider_info and provider_info.available
-                else (provider_info.unavailable_reason if provider_info else None)
+                "حداقل یک ارائه‌دهنده هوش مصنوعی در دسترس است."
+                if any_ai_available
+                else "هیچ ارائه‌دهنده هوش مصنوعی در دسترس نیست."
             ),
             hint_fa=(
                 None
-                if provider_info and provider_info.available
-                else "مسیر Claude CLI را در تنظیمات وارد کنید."
+                if any_ai_available
+                else "حداقل یکی از Claude CLI یا Codex CLI را نصب و وارد حساب کنید."
             ),
         )
     )

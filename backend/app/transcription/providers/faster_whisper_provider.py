@@ -69,16 +69,19 @@ ENGINE_MODELS: tuple[EngineModel, ...] = (
     ),
     EngineModel(
         id="small",
-        label_fa="متوسط (پیشنهادی)",
+        label_fa="متوسط",
         size_mb=470,
-        description_fa="تعادل مناسب میان دقت و سرعت؛ برای فارسی و انگلیسی توصیه می‌شود.",
-        recommended=True,
+        description_fa="سریع، اما برای فارسی دقت کافی ندارد؛ برای زبان انگلیسی مناسب‌تر است.",
     ),
     EngineModel(
         id="medium",
-        label_fa="بزرگ",
+        label_fa="بزرگ (پیشنهادی برای فارسی)",
         size_mb=1500,
-        description_fa="دقت بالاتر، اما روی پردازنده حدود سه برابر کندتر است.",
+        description_fa=(
+            "دقت تشخیص فارسی به‌طور محسوسی بهتر از مدل «متوسط» است؛ "
+            "روی پردازنده حدود سه برابر کندتر است."
+        ),
+        recommended=True,
     ),
     EngineModel(
         id="large-v3",
@@ -88,7 +91,13 @@ ENGINE_MODELS: tuple[EngineModel, ...] = (
     ),
 )
 
-DEFAULT_MODEL = "small"
+#: "small" noticeably under-transcribes Persian in practice - Persian is a
+#: lower-resource language in Whisper's own training mix than English, and
+#: the accuracy gap between "small" and "medium" is far larger for Persian
+#: than for English. "medium" is the default despite being slower and a
+#: larger download, because the platform's stated audience transcribes mostly
+#: Persian content and "fast but wrong" is not a useful default there.
+DEFAULT_MODEL = "medium"
 
 
 class FasterWhisperProvider(TranscriptionProvider):

@@ -2,7 +2,9 @@
 
 The single entry point for AI work. Job handlers and API routers call this;
 they never construct a provider, never rank models, and never build a prompt by
-hand. That is what keeps "add GPT later" a change in one directory.
+hand. That is what let adding OpenAI Codex alongside Claude be a change
+confined to `app/ai/providers/codex/` plus one line in `registry.py` - see
+docs/AI_PROVIDERS.md.
 
 Responsibilities:
 

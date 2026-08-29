@@ -45,8 +45,9 @@ from app.domain.enums import AITaskType, ModelTier
 
 logger = get_logger(__name__)
 
-#: Provider id these built-ins belong to.
+#: Provider ids these built-ins belong to.
 CLAUDE_PROVIDER_ID = "claude"
+CODEX_PROVIDER_ID = "codex"
 
 #: Built-in Claude models, expressed as CLI aliases.
 _BUILTIN_MODELS: list[ModelSpec] = [
@@ -121,6 +122,35 @@ _BUILTIN_MODELS: list[ModelSpec] = [
         speed=3,
         quality=4,
         context_note="انتخاب دستی.",
+    ),
+    # -- Codex -----------------------------------------------------------
+    #
+    # Deliberately a single entry rather than a list of named model
+    # snapshots. The Codex CLI's own model naming was observed to already be
+    # ahead of what any hardcoded list here could confidently claim to be
+    # current (see docs/AI_PROVIDERS.md for what was actually run against
+    # this CLI version) - `good_for`/`rationale_fa` etc. would be guesses.
+    # Leaving `id` unmapped to any `-m` value (see
+    # `app/ai/providers/codex/cli.py::CodexCLI.build_argv`) means the CLI
+    # always resolves its own current default, so this entry can never go
+    # stale the way a pinned snapshot name would. An operator who wants a
+    # specific Codex model pinned can add it via `config/models.json` once
+    # they know their account's available model names - see
+    # docs/AI_MODELS.md.
+    ModelSpec(
+        id="codex-default",
+        provider=CODEX_PROVIDER_ID,
+        display_name="OpenAI Codex (پیش‌فرض)",
+        tier=ModelTier.BALANCED,
+        good_for=[],
+        rationale_fa=(
+            "از مدل پیش‌فرض خود Codex CLI استفاده می‌کند. نام مدل‌های OpenAI به‌مرور "
+            "تغییر می‌کند؛ برای انتخاب مدل مشخص، آن را در تنظیمات پیشرفته "
+            "(config/models.json) اضافه کنید."
+        ),
+        speed=3,
+        quality=4,
+        context_note="انتخاب پیش‌فرض؛ همیشه با نسخه نصب‌شده Codex CLI هم‌راستا می‌ماند.",
     ),
 ]
 

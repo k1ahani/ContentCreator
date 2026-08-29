@@ -10,23 +10,41 @@ assume you understand the layer boundaries it explains.
 
 ---
 
-## Adding a new AI provider (e.g. GPT)
+## Adding a new AI provider
 
-Full reasoning in `docs/AI_PROVIDERS.md`; this is the terse checklist.
+Full reasoning in `docs/AI_PROVIDERS.md`; this is the terse checklist. Claude
+and OpenAI Codex (`app/ai/providers/claude/`, `app/ai/providers/codex/`) are
+both real implementations of this exact recipe - read either as a concrete
+template, especially the Codex one if the provider you're adding is also a
+third-party CLI rather than a direct API.
 
-1. `app/ai/providers/gpt/provider.py` — implement `AIProvider`
-   (`app/ai/base.py`): `check_availability` (never raises), `generate`
-   (streams via `on_output`, honours `cancel_token`, wraps errors as `AIError`
-   subclasses).
-2. `app/ai/registry.py::ProviderRegistry.build()` — add one line:
-   `GPTProvider(api_key=...)`.
+1. `app/ai/providers/<name>/provider.py` — implement `AIProvider`
+   (`app/ai/base.py`): `check_availability` (never raises, and stays fast -
+   see `docs/AI_PROVIDERS.md`'s Codex section for a real ~40-second cost of
+   getting this wrong by probing with a live call instead of a cheap status
+   check), `generate` (streams via `on_output`, honours `cancel_token`, wraps
+   errors as `AIError` subclasses).
+2. `app/ai/registry.py::ProviderRegistry.build()` — add one line alongside
+   the existing two.
 3. `app/ai/models.py` — add the provider's `ModelSpec` entries (or let a user
-   add them via `config/models.json`).
+   add them via `config/models.json`). If you cannot verify the provider's
+   current model names against a real installed CLI, prefer a single
+   "use the CLI's own default" sentinel entry (see Codex's `codex-default`)
+   over a guessed list that might already be stale.
+4. `app/services/settings.py::SettingsService.DEFAULTS` — add
+   `ai.<name>_cli_path` (or equivalent) if the provider is CLI-driven, then
+   thread it through `ServiceContainer.providers`
+   (`app/container.py`) into `ProviderRegistry.build()`.
+5. `frontend/src/pages/SettingsPage.tsx`'s `AiSection` —
+   add the new provider to `PROVIDER_CLI_PATH_KEY` so its CLI path field and
+   install hint appear alongside Claude's and Codex's.
 
 Nothing else changes. `AIService`, every job handler, the recommendation
-engine, and the frontend's provider selectors already work against the
-interface. **Verify** by hitting `GET /api/ai/providers` and confirming the
-new provider appears with correct availability reporting.
+engine, and the frontend's provider/model selectors (including
+`ModelSelector.tsx`, which reads the user's configured default provider
+rather than a hardcoded one) already work against the interface. **Verify**
+by hitting `GET /api/ai/providers` and confirming the new provider appears
+with correct availability reporting.
 
 ---
 

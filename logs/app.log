@@ -79,3 +79,254 @@
 2026-08-29 09:25:44 INFO     [app.container] application ready (workers=2)
 2026-08-29 09:25:44 INFO     [app.main] listening on http://127.0.0.1:8420
 2026-08-29 09:25:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:26:18 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:26:24 INFO     [app.api.routers.projects] created project 00tkioi04moy1qk1 (تست)
+2026-08-29 09:26:34 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:26:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:27:11 INFO     [app.jobs.queue] queued job 00tkiojb71vbh2re (audio_extract)
+2026-08-29 09:27:11 INFO     [app.jobs.queue] running job 00tkiojb71vbh2re (audio_extract)
+2026-08-29 09:27:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:27:11 INFO     [app.media.audio] extracting audio: sarbarg.mp4 -> sarbarg.mp3 (preset=mp3, duration=79.4s)
+2026-08-29 09:27:12 INFO     [app.jobs.queue] job 00tkiojb71vbh2re completed in 0.6s
+2026-08-29 09:28:51 INFO     [app.jobs.queue] queued job 00tkiom342mkh0ga (transcribe)
+2026-08-29 09:28:51 INFO     [app.jobs.queue] running job 00tkiom342mkh0ga (transcribe)
+2026-08-29 09:28:51 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'small'
+2026-08-29 09:28:56 WARNING  [huggingface_hub.utils._http] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-29 09:36:07 INFO     [app.transcription.providers.faster_whisper_provider] model 'small' ready in 435.5s
+2026-08-29 09:36:07 INFO     [faster_whisper] Processing audio with duration 01:19.366
+2026-08-29 09:36:08 INFO     [faster_whisper] VAD filter removed 00:00.000 of audio
+2026-08-29 09:36:44 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:37:13 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:37:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:37:57 INFO     [app.jobs.queue] queued job 00tkip192pcgx43s (transcribe)
+2026-08-29 09:37:57 INFO     [app.jobs.queue] running job 00tkip192pcgx43s (transcribe)
+2026-08-29 09:37:57 INFO     [faster_whisper] Processing audio with duration 01:19.366
+2026-08-29 09:37:58 INFO     [faster_whisper] VAD filter removed 00:00.000 of audio
+2026-08-29 09:39:16 INFO     [app.transcription.providers.faster_whisper_provider] transcribed sarbarg.mp3: 10 segments, 79.4s audio in 189.0s
+2026-08-29 09:39:16 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=1579
+2026-08-29 09:41:27 INFO     [app.jobs.queue] job 00tkiom342mkh0ga completed in 755.5s
+2026-08-29 09:41:40 INFO     [app.transcription.providers.faster_whisper_provider] transcribed sarbarg.mp3: 10 segments, 79.4s audio in 223.0s
+2026-08-29 09:41:40 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=1560
+2026-08-29 09:44:18 INFO     [app.jobs.queue] job 00tkip192pcgx43s completed in 380.8s
+2026-08-29 09:45:17 INFO     [app.jobs.queue] queued job 00tkipdh4tvblz8c (subtitle_generate)
+2026-08-29 09:45:17 INFO     [app.jobs.queue] running job 00tkipdh4tvblz8c (subtitle_generate)
+2026-08-29 09:45:17 INFO     [app.jobs.queue] job 00tkipdh4tvblz8c completed in 0.0s
+2026-08-29 09:48:18 INFO     [app.jobs.queue] queued job 00tkipiic53z7qkl (tts_synthesize)
+2026-08-29 09:48:18 INFO     [app.jobs.queue] running job 00tkipiic53z7qkl (tts_synthesize)
+2026-08-29 09:48:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:48:20 INFO     [app.jobs.queue] job 00tkipiic53z7qkl completed in 1.4s
+2026-08-29 09:49:10 INFO     [app.jobs.queue] queued job 00tkipjy4c1z8uwl (tts_synthesize)
+2026-08-29 09:49:10 INFO     [app.jobs.queue] running job 00tkipjy4c1z8uwl (tts_synthesize)
+2026-08-29 09:49:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:49:13 INFO     [app.jobs.queue] job 00tkipjy4c1z8uwl completed in 2.7s
+2026-08-29 09:55:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:58:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 10:11:30 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 10:11:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 10:12:03 INFO     [app.jobs.queue] queued job 00tkiqm332qaih8t (audio_extract)
+2026-08-29 10:12:03 INFO     [app.jobs.queue] running job 00tkiqm332qaih8t (audio_extract)
+2026-08-29 10:12:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 10:12:03 INFO     [app.media.audio] extracting audio: profile.mp4 -> profile.ogg (preset=opus, duration=114.6s)
+2026-08-29 10:12:05 INFO     [app.jobs.queue] job 00tkiqm332qaih8t completed in 2.5s
+2026-08-29 10:12:30 INFO     [app.jobs.queue] queued job 00tkiqmu36g3nelm (transcribe)
+2026-08-29 10:12:30 INFO     [app.jobs.queue] running job 00tkiqmu36g3nelm (transcribe)
+2026-08-29 10:12:31 INFO     [faster_whisper] Processing audio with duration 01:54.590
+2026-08-29 10:12:32 INFO     [faster_whisper] VAD filter removed 00:00.303 of audio
+2026-08-29 10:14:57 INFO     [app.transcription.providers.faster_whisper_provider] transcribed profile.ogg: 33 segments, 114.6s audio in 146.9s
+2026-08-29 10:14:57 INFO     [app.jobs.queue] job 00tkiqmu36g3nelm completed in 146.9s
+2026-08-29 11:48:48 WARNING  [app.jobs.queue] job 00tkiv3c0m4gqvlo failed: asset 'nonexistent' not found
+2026-08-29 11:48:49 WARNING  [app.jobs.queue] job 00tkiv3d9erha1gn failed: no transcript text to build subtitles from
+2026-08-29 11:48:51 WARNING  [app.jobs.queue] job 00tkiv3fdx259l56 failed: track '00tkiv3f0uev2f5q' has no cues
+2026-08-29 11:49:32 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 6272)
+2026-08-29 11:54:10 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 11:54:11 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 11:54:11 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 11:54:11 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 11:54:11 INFO     [app.container] application ready (workers=2)
+2026-08-29 11:54:11 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 11:54:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 11:54:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 11:55:13 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:02:36 WARNING  [app.jobs.queue] job 00tkivqc2gf2ic2l failed: asset 'nonexistent' not found
+2026-08-29 12:02:38 WARNING  [app.jobs.queue] job 00tkivqe3y4zvupy failed: no transcript text to build subtitles from
+2026-08-29 12:02:41 WARNING  [app.jobs.queue] job 00tkivqg0zi70twm failed: track '00tkivqg6xs0siws' has no cues
+2026-08-29 12:03:15 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 19864)
+2026-08-29 12:03:27 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:03:27 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 12:03:27 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:03:27 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 12:03:27 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 12:03:27 INFO     [app.container] application ready (workers=2)
+2026-08-29 12:03:27 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 12:03:36 INFO     [app.api.routers.projects] created project 00tkivs0d5utwlv5 (test delete track)
+2026-08-29 12:03:50 INFO     [app.jobs.queue] queued job 00tkivse6k8cqjcn (text_task)
+2026-08-29 12:03:50 INFO     [app.jobs.queue] running job 00tkivse6k8cqjcn (text_task)
+2026-08-29 12:03:50 INFO     [app.ai.service] AI task=text_editing provider=claude model=haiku chars=226
+2026-08-29 12:03:59 INFO     [app.jobs.queue] job 00tkivse6k8cqjcn completed in 9.3s
+2026-08-29 12:04:17 INFO     [app.api.routers.projects] removed workspace for project 00tkivs0d5utwlv5
+2026-08-29 12:08:42 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:08:42 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:08:42 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 12:08:42 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0001']
+2026-08-29 12:08:42 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 12:08:42 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 12:08:42 INFO     [app.container] application ready (workers=2)
+2026-08-29 12:08:42 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 12:08:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:09:15 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:09:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:09:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:10:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:10:29 INFO     [app.api.routers.projects] created project 00tkiw3hbnnsi6cf (تست)
+2026-08-29 12:10:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:24:25 WARNING  [app.jobs.queue] job 00tkiwqpbunip1tb failed: asset 'nonexistent' not found
+2026-08-29 12:24:26 WARNING  [app.jobs.queue] job 00tkiwqqbnyj21gk failed: no transcript text to build subtitles from
+2026-08-29 12:24:28 WARNING  [app.jobs.queue] job 00tkiwqsber4ma5b failed: track '00tkiwqsb57vs5lp' has no cues
+2026-08-29 12:25:02 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 20640)
+2026-08-29 12:25:18 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:25:18 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 12:25:18 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:25:18 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 12:25:18 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 12:25:18 INFO     [app.container] application ready (workers=2)
+2026-08-29 12:25:18 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 12:28:52 INFO     [app.services.settings] updated 1 setting(s): ['ai.provider']
+2026-08-29 12:28:52 INFO     [app.services.settings] updated 1 setting(s): ['ai.provider']
+2026-08-29 12:29:10 INFO     [app.api.routers.projects] created project 00tkiwym35gft6t4 (codex test)
+2026-08-29 12:29:28 INFO     [app.api.routers.projects] created project 00tkiwz4d7yonyrq (codex test)
+2026-08-29 12:29:29 INFO     [app.jobs.queue] queued job 00tkiwz55chez80b (text_task)
+2026-08-29 12:29:29 INFO     [app.jobs.queue] running job 00tkiwz55chez80b (text_task)
+2026-08-29 12:29:29 WARNING  [app.jobs.queue] job 00tkiwz55chez80b failed: provider 'codex' is not available: Codex CLI نصب است اما وارد حساب نشده است.
+2026-08-29 12:30:12 INFO     [app.api.routers.projects] removed workspace for project 00tkiwz4d7yonyrq
+2026-08-29 12:38:37 WARNING  [app.jobs.queue] job 00tkixed17mk8fr4 failed: asset 'nonexistent' not found
+2026-08-29 12:38:38 WARNING  [app.jobs.queue] job 00tkixee2vyhecbq failed: no transcript text to build subtitles from
+2026-08-29 12:38:40 WARNING  [app.jobs.queue] job 00tkixegdwa63nlm failed: track '00tkixegbqikxepd' has no cues
+2026-08-29 12:39:14 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 22172)
+2026-08-29 12:40:26 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:40:26 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:40:26 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 12:40:26 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0001']
+2026-08-29 12:40:26 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 12:40:26 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 12:40:26 INFO     [app.container] application ready (workers=2)
+2026-08-29 12:40:26 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 12:40:32 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 12:41:43 WARNING  [app.jobs.queue] job 00tkixjj2hpfiy1a failed: asset 'nonexistent' not found
+2026-08-29 12:41:44 WARNING  [app.jobs.queue] job 00tkixjkcfgpme5i failed: no transcript text to build subtitles from
+2026-08-29 12:41:45 WARNING  [app.jobs.queue] job 00tkixjl2t0e4ft9 failed: track '00tkixjldv3qenb6' has no cues
+2026-08-29 12:42:19 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 21972)
+2026-08-29 12:42:32 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:42:32 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 12:42:32 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 12:42:32 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0001']
+2026-08-29 12:42:32 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 12:42:32 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 12:42:32 INFO     [app.container] application ready (workers=2)
+2026-08-29 12:42:32 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 12:42:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:08:18 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 13:08:18 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 13:08:18 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 13:08:18 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0001']
+2026-08-29 13:08:18 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 13:08:18 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 13:08:18 INFO     [app.container] application ready (workers=2)
+2026-08-29 13:08:18 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 13:08:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:08:52 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:09:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:09:27 INFO     [app.api.routers.projects] created project 00tkiytr6yojhup7 (تستغ)
+2026-08-29 13:09:36 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:10:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:10:10 INFO     [app.jobs.queue] queued job 00tkiyuy48qc277f (audio_extract)
+2026-08-29 13:10:10 INFO     [app.jobs.queue] running job 00tkiyuy48qc277f (audio_extract)
+2026-08-29 13:10:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 13:10:11 INFO     [app.media.audio] extracting audio: forsat.mp4 -> forsat.ogg (preset=opus, duration=134.6s)
+2026-08-29 13:10:13 INFO     [app.jobs.queue] job 00tkiyuy48qc277f completed in 2.7s
+2026-08-29 13:10:36 INFO     [app.jobs.queue] queued job 00tkiyvocu5q4pae (transcribe)
+2026-08-29 13:10:36 INFO     [app.jobs.queue] running job 00tkiyvocu5q4pae (transcribe)
+2026-08-29 13:10:36 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'medium'
+2026-08-29 13:10:38 WARNING  [huggingface_hub.utils._http] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-29 13:47:11 INFO     [app.transcription.providers.faster_whisper_provider] model 'medium' ready in 2194.7s
+2026-08-29 13:47:12 INFO     [faster_whisper] Processing audio with duration 02:14.606
+2026-08-29 13:47:13 INFO     [faster_whisper] VAD filter removed 00:01.136 of audio
+2026-08-29 13:54:28 INFO     [app.transcription.providers.faster_whisper_provider] transcribed forsat.ogg: 20 segments, 134.6s audio in 437.5s
+2026-08-29 13:54:29 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=676
+2026-08-29 13:54:53 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=641
+2026-08-29 13:54:57 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=584
+2026-08-29 13:55:02 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=643
+2026-08-29 13:55:25 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=623
+2026-08-29 13:55:32 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=630
+2026-08-29 13:56:44 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=578
+2026-08-29 13:56:48 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=642
+2026-08-29 13:57:37 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=618
+2026-08-29 13:58:07 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=639
+2026-08-29 13:59:10 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=655
+2026-08-29 13:59:47 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=566
+2026-08-29 13:59:51 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=626
+2026-08-29 14:00:37 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=564
+2026-08-29 14:00:41 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=619
+2026-08-29 14:00:46 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=632
+2026-08-29 14:00:51 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=624
+2026-08-29 14:01:08 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=595
+2026-08-29 14:01:12 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=616
+2026-08-29 14:02:28 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=601
+2026-08-29 14:02:32 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=572
+2026-08-29 14:03:06 INFO     [app.jobs.queue] job 00tkiyvocu5q4pae completed in 3150.1s
+2026-08-29 14:42:45 INFO     [app.jobs.queue] queued job 00tkj35922bz5pi2 (subtitle_generate)
+2026-08-29 14:42:45 INFO     [app.jobs.queue] running job 00tkj35922bz5pi2 (subtitle_generate)
+2026-08-29 14:42:45 INFO     [app.jobs.queue] job 00tkj35922bz5pi2 completed in 0.0s
+2026-08-29 14:49:14 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:49:16 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:49:16 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 14:49:16 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:49:16 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 14:49:16 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 14:49:16 INFO     [app.container] application ready (workers=2)
+2026-08-29 14:49:16 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 14:50:49 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:50:50 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:50:50 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 14:50:50 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 14:50:50 INFO     [app.container] application ready (workers=2)
+2026-08-29 14:50:50 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 14:50:50 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:54:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:55:27 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:55:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:56:54 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:56:55 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:56:55 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 14:56:55 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:56:55 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 14:56:55 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 14:56:55 INFO     [app.container] application ready (workers=2)
+2026-08-29 14:56:55 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 14:58:54 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:58:54 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:58:54 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 14:58:54 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 14:58:54 INFO     [app.container] application ready (workers=2)
+2026-08-29 14:58:54 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 14:58:55 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 14:59:19 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:59:19 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 14:59:19 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 14:59:19 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 14:59:19 INFO     [app.container] application ready (workers=2)
+2026-08-29 14:59:19 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 14:59:20 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 15:00:56 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 15:00:57 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 15:00:57 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 15:00:57 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 15:00:57 INFO     [app.container] application ready (workers=2)
+2026-08-29 15:00:57 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 15:00:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 15:03:07 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 15:03:08 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 15:03:08 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 15:03:08 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 15:03:08 INFO     [app.container] application ready (workers=2)
+2026-08-29 15:03:08 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 15:03:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)

@@ -103,7 +103,10 @@ export function SubtitleEditorPage() {
     },
   });
 
-  const renderRunner = useJobRunner(() => toast.success("رندر ویدیو با زیرنویس تکمیل شد"));
+  const renderRunner = useJobRunner(
+    () => toast.success("رندر ویدیو با زیرنویس تکمیل شد"),
+    `cca:job:${projectId}:subtitle_render:${trackId}`,
+  );
 
   function commitCue(cueId: string, patch: Partial<Pick<SubtitleCue, "text" | "start" | "end">>) {
     setCues((prev) => prev.map((c) => (c.id === cueId ? { ...c, ...patch } : c)));
@@ -155,7 +158,7 @@ export function SubtitleEditorPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 gap-4">
         <div className="space-y-4">
           <Card>
             <CardBody className="space-y-3">

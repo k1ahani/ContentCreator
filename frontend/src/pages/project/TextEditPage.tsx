@@ -37,6 +37,13 @@ export function TextEditPage() {
   const [targetLang, setTargetLang] = useState<Language>("en");
   const [model, setModel] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
+  // Which built-in prompt (if any) the user picked for editing/translation.
+  // A task can have more than one built-in template (e.g. "اصلاح نگارشی" vs
+  // "روان‌سازی و بهبود خوانایی" under text_editing); without this the chips
+  // were purely decorative - clicking one only showed a toast with its
+  // description, the backend always used index 0 regardless of what the
+  // user clicked. Selecting one now actually sends that prompt's body.
+  const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
 
   const { data: documents } = useQuery({
     queryKey: ["documents", projectId],
@@ -46,11 +53,12 @@ export function TextEditPage() {
     queryKey: ["prompts", MODE_TASK[mode]],
     queryFn: () => aiApi.prompts(MODE_TASK[mode]),
   });
+  const selectedPrompt = prompts?.items.find((p) => p.id === selectedPromptId) ?? null;
 
   const runner = useJobRunner((job) => {
     const text = (job.output as { result?: string }).result ?? "";
     setResult(text);
-  });
+  }, `cca:job:${projectId}:text_task`);
 
   const loadDocument = (id: string) => {
     setSourceDocId(id);
@@ -71,7 +79,7 @@ export function TextEditPage() {
       jobsApi.processText(projectId, {
         task: MODE_TASK[mode],
         content,
-        prompt: mode === "custom" ? customPrompt : undefined,
+        prompt: mode === "custom" ? customPrompt : selectedPrompt?.body,
         source_language: mode === "translation" ? sourceLang : undefined,
         target_language: mode === "translation" ? targetLang : undefined,
         model: model ?? undefined,
@@ -108,7 +116,10 @@ export function TextEditPage() {
         ).map((m) => (
           <button
             key={m.id}
-            onClick={() => setMode(m.id)}
+            onClick={() => {
+              setMode(m.id);
+              setSelectedPromptId(null);
+            }}
             className={
               "rounded-xl border px-4 py-2 text-sm font-medium transition-colors " +
               (mode === m.id
@@ -160,17 +171,31 @@ export function TextEditPage() {
       )}
 
       {mode !== "custom" && prompts && prompts.items.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {prompts.items.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => toast.info(p.description_fa || p.name_fa)}
-              title={p.description_fa}
-              className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500 hover:border-brand-300 hover:text-brand-600 dark:border-slate-800 dark:text-slate-400"
-            >
-              {p.name_fa}
-            </button>
-          ))}
+        <div>
+          <div className="flex flex-wrap gap-1.5">
+            {prompts.items.map((p) => {
+              const active = selectedPromptId === p.id;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => setSelectedPromptId(active ? null : p.id)}
+                  title={p.description_fa}
+                  aria-pressed={active}
+                  className={
+                    "rounded-full border px-3 py-1 text-xs font-medium transition-colors " +
+                    (active
+                      ? "border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-600 dark:bg-brand-950/30 dark:text-brand-300"
+                      : "border-slate-200 text-slate-500 hover:border-brand-300 hover:text-brand-600 dark:border-slate-800 dark:text-slate-400")
+                  }
+                >
+                  {p.name_fa}
+                </button>
+              );
+            })}
+          </div>
+          {selectedPrompt?.description_fa && (
+            <p className="mt-1.5 text-xs text-slate-400">{selectedPrompt.description_fa}</p>
+          )}
         </div>
       )}
 

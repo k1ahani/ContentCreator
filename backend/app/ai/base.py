@@ -1,13 +1,15 @@
 """AI provider interface.
 
-This is the seam that keeps the platform from being a Claude application. Every
-consumer - job handlers, services, the API - depends only on :class:`AIProvider`
-and the provider-neutral request/response models in ``app/domain/ai.py``.
+This is the seam that keeps the platform from being locked to one AI vendor.
+Every consumer - job handlers, services, the API - depends only on
+:class:`AIProvider` and the provider-neutral request/response models in
+``app/domain/ai.py``. Two real implementations already prove this holds:
+``app/ai/providers/claude/`` and ``app/ai/providers/codex/`` (OpenAI Codex).
 
-To add a provider (GPT, Gemini, a local model), create a package under
-``app/ai/providers/<name>/``, implement this interface, and register it in
-``app/ai/registry.py``. Nothing in the core needs to change. The full recipe is
-in docs/EXTENDING_THE_APPLICATION.md.
+To add a provider (Gemini, a local model, anything else), create a package
+under ``app/ai/providers/<name>/``, implement this interface, and register it
+in ``app/ai/registry.py``. Nothing in the core needs to change. The full
+recipe is in docs/EXTENDING_THE_APPLICATION.md.
 
 Contract notes for implementers:
 

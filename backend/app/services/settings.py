@@ -39,8 +39,13 @@ DEFAULTS: dict[str, Any] = {
     "general.max_import_size_mb": 8192,
     "general.theme": "system",
     # -- ai --------------------------------------------------------------
+    #: Which registered provider (see app/ai/registry.py) new AI calls use
+    #: by default. Exposed directly in Settings -> AI as "ارائه‌دهنده هوش
+    #: مصنوعی"; a per-call override always wins over this - see
+    #: AIService.resolve_provider_id.
     "ai.provider": "claude",
     "ai.claude_cli_path": "",
+    "ai.codex_cli_path": "",
     "ai.default_model": "sonnet",
     #: Per-task overrides, e.g. {"translation": "opus"}. Wins over the
     #: recommendation engine; see app/ai/recommendation.py.
@@ -49,7 +54,7 @@ DEFAULTS: dict[str, Any] = {
     "ai.default_language": Language.PERSIAN.value,
     # -- transcription ---------------------------------------------------
     "transcription.engine": "faster_whisper",
-    "transcription.model_size": "small",
+    "transcription.model_size": "medium",
     "transcription.language": Language.PERSIAN.value,
     "transcription.vad_filter": True,
     #: Run the LLM refinement pass automatically after transcription.
@@ -77,7 +82,13 @@ DEFAULTS: dict[str, Any] = {
 
 #: Keys whose values are paths that must exist when non-empty.
 _PATH_KEYS = frozenset(
-    {"general.workspace_dir", "general.default_output_dir", "media.ffmpeg_path", "ai.claude_cli_path"}
+    {
+        "general.workspace_dir",
+        "general.default_output_dir",
+        "media.ffmpeg_path",
+        "ai.claude_cli_path",
+        "ai.codex_cli_path",
+    }
 )
 
 #: Sections exposed to the settings page, in display order.
@@ -238,6 +249,10 @@ class SettingsService:
     @property
     def claude_cli_path(self) -> str | None:
         return (self.get("ai.claude_cli_path") or "").strip() or None
+
+    @property
+    def codex_cli_path(self) -> str | None:
+        return (self.get("ai.codex_cli_path") or "").strip() or None
 
     @property
     def ffmpeg_path(self) -> str | None:

@@ -35,7 +35,11 @@ export function TranscribePage() {
     queryFn: () => aiApi.transcriptionEngines(true),
   });
 
-  const runner = useJobRunner();
+  // persistKey: transcription is the operation most likely to run long
+  // enough that a user wanders off to another tab and comes back - this is
+  // what lets them do that without losing sight of progress (or the
+  // finished transcript, if it completed while they were away).
+  const runner = useJobRunner(undefined, `cca:job:${projectId}:transcribe`);
   const engine = engines?.items[0];
 
   const start = () => {

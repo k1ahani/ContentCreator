@@ -19,6 +19,7 @@ still saved and the job still succeeds.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from app.core.errors import AppError, NotFoundError, ProcessCancelledError
@@ -31,6 +32,31 @@ from app.jobs.registry import register_handler
 from app.ai.prompts.library import get_builtin
 
 logger = get_logger(__name__)
+
+#: Seeds Whisper's decoder with correctly-punctuated Persian style when the
+#: caller supplied no ``initial_prompt`` of their own and the target language
+#: is Persian. Whisper conditions its very first tokens on this text, which
+#: measurably improves Persian orthography and punctuation - Persian is a
+#: lower-resource language in Whisper's training mix than English, and the
+#: "small" model in particular benefits from this nudge. Content-neutral by
+#: design: it must not bias what the model transcribes, only how it writes it.
+DEFAULT_PERSIAN_SEED_PROMPT = (
+    "سلام، امروز هوا بسیار خوب است. این یک متن نمونه فارسی با نقطه‌گذاری "
+    "و نگارش درست است."
+)
+
+#: Splits text into sentences on Latin and Persian sentence-ending
+#: punctuation, keeping the punctuation attached to the sentence it ends.
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?؟۔])\s+")
+
+
+def _split_sentences(text: str) -> list[str]:
+    """Break refined-ready text into sentences for one-at-a-time processing."""
+    pieces = [piece.strip() for piece in _SENTENCE_SPLIT_RE.split(text) if piece.strip()]
+    if pieces:
+        return pieces
+    stripped = text.strip()
+    return [stripped] if stripped else []
 
 
 @register_handler(JobType.TRANSCRIBE)
@@ -52,12 +78,18 @@ def handle_transcribe(ctx: JobContext) -> dict:
         )
 
     language = Language(ctx.input.get("language") or settings.get("transcription.language"))
+    initial_prompt = ctx.input.get("initial_prompt") or None
+    if not initial_prompt and language == Language.PERSIAN:
+        # See DEFAULT_PERSIAN_SEED_PROMPT: measurably improves Persian
+        # orthography/punctuation, especially on the smaller model sizes.
+        initial_prompt = DEFAULT_PERSIAN_SEED_PROMPT
+
     options = TranscriptionOptions(
         language=language,
         model_size=str(ctx.input.get("model_size") or settings.get("transcription.model_size")),
         auto_detect_language=bool(ctx.input.get("auto_detect_language", False)),
         vad_filter=bool(ctx.input.get("vad_filter", settings.get("transcription.vad_filter"))),
-        initial_prompt=ctx.input.get("initial_prompt") or None,
+        initial_prompt=initial_prompt,
     )
 
     engine_id = str(ctx.input.get("engine") or settings.get("transcription.engine"))
@@ -174,23 +206,48 @@ def handle_transcribe(ctx: JobContext) -> dict:
 
 
 def _refine(ctx: JobContext, text: str, language: Language) -> str:
-    """Run the LLM refinement pass through the provider architecture."""
+    """Run the LLM refinement pass through the provider architecture.
+
+    One sentence at a time, not the whole transcript in a single call. A long
+    block sent in one shot gives the model room to drift - paraphrasing,
+    merging, or quietly dropping a clause partway through - which is exactly
+    the failure mode requirement forbids ("the AI must never silently
+    overwrite the original"). Refining sentence by sentence keeps each call's
+    scope small enough that the model has nothing to do but fix punctuation
+    and spelling in that one sentence, and a mistake on one sentence can't
+    ripple into its neighbours.
+    """
     template = get_builtin("transcript_refine")
     assert template is not None  # part of the built-in library
 
     requested_model = ctx.input.get("ai_model") or None
-    response = ctx.services.ai.run(
-        task=AITaskType.TRANSCRIPTION_REFINEMENT,
-        prompt=template.body,
-        content=text,
-        language=language,
-        model=requested_model,
-        on_output=ctx.log_callback(),
-        cancel_token=ctx.cancel_token,
-    )
-    ctx.set_model(response.provider, response.model)
-    ctx.system(f"refined with {response.provider}/{response.model} in {response.duration_seconds:.1f}s")
-    return response.text
+    sentences = _split_sentences(text)
+    total = len(sentences)
+    refined_parts: list[str] = []
+    provider_used = ""
+    model_used = ""
+
+    for index, sentence in enumerate(sentences):
+        ctx.raise_if_cancelled()
+        response = ctx.services.ai.run(
+            task=AITaskType.TRANSCRIPTION_REFINEMENT,
+            prompt=template.body,
+            content=sentence,
+            language=language,
+            model=requested_model,
+            on_output=ctx.log_callback(),
+            cancel_token=ctx.cancel_token,
+        )
+        refined_parts.append(response.text)
+        provider_used, model_used = response.provider, response.model
+        ctx.set_model(provider_used, model_used)
+        ctx.set_progress(
+            0.78 + 0.20 * ((index + 1) / total),
+            f"در حال بازبینی جمله {index + 1} از {total}",
+        )
+
+    ctx.system(f"refined {total} sentence(s) with {provider_used}/{model_used}")
+    return " ".join(refined_parts)
 
 
 def _scaled_progress(ctx: JobContext, *, ceiling: float):

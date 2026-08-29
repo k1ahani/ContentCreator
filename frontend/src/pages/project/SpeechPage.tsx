@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Play, Volume2 } from "lucide-react";
 import { useProject } from "@/hooks/useProject";
 import { useJobRunner } from "@/hooks/useJobRunner";
-import { aiApi, jobsApi } from "@/lib/api/resources";
+import { aiApi, documentsApi, jobsApi } from "@/lib/api/resources";
 import { assetUrl } from "@/lib/api/client";
 import { SpeechSegmentEditor, type EditorSegment } from "@/components/tts/SpeechSegmentEditor";
 import { CliConsole } from "@/components/console/CliConsole";
@@ -39,6 +39,7 @@ export function SpeechPage() {
   const [segments, setSegments] = useState<EditorSegment[]>([
     { id: crypto.randomUUID(), kind: "text", text: "" },
   ]);
+  const [sourceDocId, setSourceDocId] = useState("");
 
   const { data: voices } = useQuery({
     queryKey: ["voices", language],
@@ -48,11 +49,33 @@ export function SpeechPage() {
     queryKey: ["ttsProviders"],
     queryFn: () => aiApi.ttsProviders(true),
   });
+  const { data: documents } = useQuery({
+    queryKey: ["documents", projectId],
+    queryFn: () => documentsApi.list(projectId),
+  });
+
+  const loadDocument = (id: string) => {
+    setSourceDocId(id);
+    const doc = documents?.items.find((d) => d.id === id);
+    if (doc) {
+      // Replaces the current script with a single text segment holding the
+      // document's content - the same "load, then edit" pattern as the text
+      // editor's document loader. Any pauses already placed are lost on
+      // load, same as TextEditPage discards its previous AI result on a
+      // fresh load; this is a deliberate "start from this document" action,
+      // not a merge.
+      setSegments([{ id: crypto.randomUUID(), kind: "text", text: doc.content }]);
+      if (doc.language === "fa" || doc.language === "en") {
+        setLanguage(doc.language);
+        setVoiceId("");
+      }
+    }
+  };
 
   const selectedVoice = voices?.items.find((v) => v.id === voiceId) ?? voices?.items[0];
   const effectiveVoiceId = voiceId || selectedVoice?.id || "";
 
-  const runner = useJobRunner(() => toast.success("تولید گفتار کامل شد"));
+  const runner = useJobRunner(() => toast.success("تولید گفتار کامل شد"), `cca:job:${projectId}:speech`);
 
   const synthesize = () => {
     const hasText = segments.some((s) => s.kind === "text" && (s.text ?? "").trim());
@@ -103,7 +126,19 @@ export function SpeechPage() {
 
       <Card>
         <CardHeader title="متن گفتار" />
-        <CardBody>
+        <CardBody className="space-y-4">
+          {documents && documents.items.length > 0 && (
+            <Field label="بارگذاری از سند موجود" hint="اختیاری - یا مستقیماً در بخش‌های زیر بنویسید">
+              <Select value={sourceDocId} onChange={(e) => loadDocument(e.target.value)}>
+                <option value="">بدون بارگذاری...</option>
+                {documents.items.map((doc) => (
+                  <option key={doc.id} value={doc.id}>
+                    {doc.title || doc.type} (نسخه {doc.version})
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          )}
           <SpeechSegmentEditor segments={segments} onChange={setSegments} />
         </CardBody>
       </Card>

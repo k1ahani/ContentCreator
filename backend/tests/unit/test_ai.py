@@ -1,11 +1,17 @@
 """AI layer tests: recommendation engine, prompts, service composition.
 
-These do not call the real Claude CLI - see tests/integration/test_ai_live.py
-for that. Here the goal is the pure logic: scoring, resolution order, prompt
-rendering, and output cleanup.
+These do not make real provider calls - see
+tests/integration/test_jobs_pipeline.py::TestTextTaskJob for a real Claude
+CLI call, and TestCodexProviderLive below for a real (but unauthenticated,
+since no test credentials exist) Codex CLI check. Here the goal is the pure
+logic: scoring, resolution order, prompt rendering, output cleanup, and
+argv construction.
 """
 
 from __future__ import annotations
+
+import shutil
+from pathlib import Path
 
 import pytest
 
@@ -17,6 +23,8 @@ from app.ai.prompts.library import (
     translation_prompt,
 )
 from app.ai.prompts.renderer import extract_variables, render_template
+from app.ai.providers.codex.cli import CodexCLI, _failure_message, _try_parse_json
+from app.ai.providers.codex.provider import CodexProvider, DEFAULT_MODEL_SENTINEL
 from app.ai.recommendation import RecommendationEngine
 from app.ai.service import strip_conversational_framing
 from app.ai.tasks import get_profile
@@ -252,3 +260,154 @@ class TestOutputCleanup:
         text = "این یک جمله بلند و توضیحی است که نباید حذف شود:\nو ادامه دارد."
         result = strip_conversational_framing(text)
         assert "این یک جمله بلند" in result
+
+
+class TestCodexBuiltinModel:
+    """The registry entry itself - see app/ai/models.py for why it is a
+    single sentinel entry rather than a list of named model snapshots."""
+
+    def test_codex_default_is_registered(self, registry: ModelRegistry):
+        assert registry.has(DEFAULT_MODEL_SENTINEL)
+        spec = registry.get(DEFAULT_MODEL_SENTINEL)
+        assert spec is not None
+        assert spec.provider == "codex"
+
+    def test_no_id_collision_with_claude_models(self, registry: ModelRegistry):
+        claude_ids = {m.id for m in registry.list(provider="claude")}
+        codex_ids = {m.id for m in registry.list(provider="codex")}
+        assert claude_ids.isdisjoint(codex_ids)
+
+    def test_providers_are_independently_listable(self, registry: ModelRegistry):
+        assert all(m.provider == "codex" for m in registry.list(provider="codex"))
+        assert all(m.provider == "claude" for m in registry.list(provider="claude"))
+
+
+class TestCodexCliArgvConstruction:
+    """Pure argv-building logic - no process execution, so these run
+    regardless of whether the Codex CLI is installed on the test machine."""
+
+    @pytest.fixture
+    def cli(self) -> CodexCLI:
+        # The path need not exist for build_argv - it only formats argv[0].
+        return CodexCLI(Path("codex.exe"))
+
+    def test_no_model_omits_dash_m(self, cli: CodexCLI):
+        argv = cli.build_argv(model=None, output_file=Path("out.txt"))
+        assert "-m" not in argv
+
+    def test_explicit_model_is_passed(self, cli: CodexCLI):
+        argv = cli.build_argv(model="o4-mini", output_file=Path("out.txt"))
+        assert "-m" in argv
+        assert argv[argv.index("-m") + 1] == "o4-mini"
+
+    def test_output_file_flag_present(self, cli: CodexCLI):
+        argv = cli.build_argv(model=None, output_file=Path("answer.txt"))
+        assert "-o" in argv
+        assert argv[argv.index("-o") + 1] == "answer.txt"
+
+    def test_never_a_shell_string(self, cli: CodexCLI):
+        # Every element must be a separate argv entry - see
+        # app/process/runner.py for why this matters (no shell involved, ever).
+        argv = cli.build_argv(model=None, output_file=Path("out.txt"))
+        assert isinstance(argv, list)
+        assert all(isinstance(part, str) for part in argv)
+
+    @pytest.mark.parametrize(
+        "flag",
+        [
+            "--skip-git-repo-check",
+            "--sandbox",
+            "read-only",
+            "--ephemeral",
+            "--ignore-user-config",
+            "--ignore-rules",
+            "--json",
+        ],
+    )
+    def test_safety_flags_always_present(self, cli: CodexCLI, flag: str):
+        argv = cli.build_argv(model=None, output_file=Path("out.txt"))
+        assert flag in argv
+
+    def test_sentinel_never_reaches_argv_as_a_value(self):
+        """The provider layer must translate DEFAULT_MODEL_SENTINEL to None
+        before it ever reaches build_argv - this asserts build_argv itself
+        has no special knowledge of the sentinel string, so a caller that
+        forgets to translate it would fail loudly (a literal, nonexistent
+        model name passed to -m) rather than silently succeeding."""
+        cli = CodexCLI(Path("codex.exe"))
+        argv = cli.build_argv(model=DEFAULT_MODEL_SENTINEL, output_file=Path("out.txt"))
+        # build_argv treats any non-None model as literal - proving the
+        # translation responsibility lives in the provider, not here.
+        assert DEFAULT_MODEL_SENTINEL in argv
+
+
+class TestCodexJsonlParsing:
+    """Parsing of the verified real event shapes from `codex exec --json`
+    (see app/ai/providers/codex/cli.py's module docstring for what was
+    actually observed against codex-cli 0.150.1)."""
+
+    def test_parses_valid_json_object_line(self):
+        assert _try_parse_json('{"type": "turn.started"}') == {"type": "turn.started"}
+
+    def test_ignores_non_json_line(self):
+        assert _try_parse_json("Reading prompt from stdin...") is None
+
+    def test_ignores_malformed_json(self):
+        assert _try_parse_json('{"type": "turn.started"') is None
+
+    def test_ignores_json_array_line(self):
+        assert _try_parse_json("[1, 2, 3]") is None
+
+    def test_extracts_turn_failed_message(self):
+        event = {"type": "turn.failed", "error": {"message": "unexpected status 401"}}
+        assert _failure_message(event) == "unexpected status 401"
+
+    def test_ignores_non_failure_events(self):
+        assert _failure_message({"type": "turn.started"}) is None
+        assert _failure_message({"type": "item.completed", "item": {}}) is None
+
+    def test_turn_failed_without_message_still_returns_something(self):
+        # Defensive: the event shape could vary; never return None for a
+        # confirmed turn.failed just because "message" was absent.
+        result = _failure_message({"type": "turn.failed", "error": {}})
+        assert result is not None
+
+
+@pytest.mark.slow
+class TestCodexProviderLive:
+    """Against the real installed Codex CLI when present; skips otherwise.
+
+    No valid Codex credentials exist in this environment, so only the
+    availability-check path (which must never attempt a live call - see
+    docs/AI_PROVIDERS.md for the ~35-40s cost of not doing this check the
+    fast way) is exercised here. A real authenticated generate() call is
+    intentionally not covered by this suite.
+    """
+
+    @pytest.fixture(autouse=True)
+    def _require_codex(self):
+        if shutil.which("codex") is None:
+            pytest.skip("Codex CLI not installed")
+
+    def test_detects_real_installation(self):
+        provider = CodexProvider()
+        detection = provider.detect(refresh=True)
+        assert detection.found is True
+        assert detection.version
+
+    def test_availability_check_is_fast(self):
+        """The whole point of using `codex login status` instead of a live
+        exec call: this must complete in a few seconds, not ~40."""
+        import time
+
+        provider = CodexProvider()
+        started = time.monotonic()
+        info = provider.check_availability()
+        elapsed = time.monotonic() - started
+
+        assert elapsed < 10, f"availability check took {elapsed:.1f}s - too slow"
+        # Whether or not this machine happens to be logged in, the important
+        # property is that the check returns a real ProviderInfo either way.
+        assert info.id == "codex"
+        if not info.available:
+            assert info.unavailable_reason

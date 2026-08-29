@@ -47,9 +47,11 @@ means for the threat model.
 ```
 
 **Why three provider layers instead of one "AI" layer.** The master
-requirements ask for an `AIProvider` abstraction so GPT can be added later.
-That abstraction is real (`app/ai/base.py`), but it only covers *text*
-generation, because that is all a chat-completions-style CLI can do. Speech
+requirements ask for an `AIProvider` abstraction so a second text provider
+could be added later without a rewrite - proven true, not just planned: Claude
+and OpenAI Codex are both real implementations today (`docs/AI_PROVIDERS.md`).
+That abstraction (`app/ai/base.py`) only covers *text* generation, because
+that is all a chat-completions-style CLI can do. Speech
 recognition (audio → timed text) and speech synthesis (text → audio) are
 different capabilities with different providers and different failure modes,
 so they get their own parallel interfaces: `app/transcription/base.py` and

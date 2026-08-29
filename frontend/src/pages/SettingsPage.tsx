@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
-import { Save, RotateCcw, FolderOpen } from "lucide-react";
+import { Save, RotateCcw, FolderOpen, CheckCircle2 } from "lucide-react";
 import { settingsApi, aiApi, systemApi } from "@/lib/api/resources";
 import { StylePanel } from "@/components/subtitle/StylePanel";
 import { FilePickerDialog } from "@/components/media/FilePickerDialog";
@@ -157,36 +157,125 @@ function GeneralSection({ draft, set, onSave, saving }: SectionProps) {
   );
 }
 
+/** Path-setting key and placeholder per provider - grows by one line per new provider. */
+const PROVIDER_CLI_PATH_KEY: Record<string, { key: string; placeholder: string; install: string }> = {
+  claude: {
+    key: "ai.claude_cli_path",
+    placeholder: "C:\\Users\\...\\claude.exe",
+    install: "نصب: راهنمای Claude Code را در claude.com/claude-code ببینید",
+  },
+  codex: {
+    key: "ai.codex_cli_path",
+    placeholder: "C:\\Users\\...\\npm\\codex.cmd",
+    install: "نصب: npm install -g @openai/codex",
+  },
+};
+
 function AiSection({ draft, set, onSave, saving }: SectionProps) {
   const { data: providers } = useQuery({ queryKey: ["providers"], queryFn: () => aiApi.providers(true) });
-  const { data: models } = useQuery({ queryKey: ["models"], queryFn: () => aiApi.models() });
-  const keys = ["ai.claude_cli_path", "ai.default_model", "ai.timeout_seconds"];
-  const claude = providers?.items.find((p) => p.id === "claude");
+  const selectedProvider = String(draft["ai.provider"] ?? "claude");
+  const { data: models } = useQuery({
+    queryKey: ["models", selectedProvider],
+    queryFn: () => aiApi.models({ provider: selectedProvider }),
+  });
+  const keys = [
+    "ai.provider",
+    "ai.claude_cli_path",
+    "ai.codex_cli_path",
+    "ai.default_model",
+    "ai.timeout_seconds",
+  ];
+  const active = providers?.items.find((p) => p.id === selectedProvider);
+
+  // Switching provider changes which model list is valid, so the previously
+  // saved default model (from the other provider) would silently point at a
+  // nonexistent id - reset it to the new provider's own default the moment
+  // the switch happens, and again once its model list has loaded.
+  const selectProvider = (providerId: string) => {
+    set("ai.provider", providerId);
+    set("ai.default_model", "");
+  };
 
   return (
     <div className="space-y-4">
-      {claude && (
+      <Field
+        label="ارائه‌دهنده هوش مصنوعی"
+        hint="این ارائه‌دهنده برای ویرایش متن، ترجمه و بازبینی رونوشت استفاده می‌شود؛ در هر صفحه نیز قابل تغییر موردی است"
+      >
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {providers?.items.map((p) => {
+            const isSelected = selectedProvider === p.id;
+            return (
+              <button
+                key={p.id}
+                onClick={() => selectProvider(p.id)}
+                className={
+                  "flex items-center justify-between rounded-xl border p-3 text-start transition-colors " +
+                  (isSelected
+                    ? "border-brand-500 bg-brand-50 dark:border-brand-600 dark:bg-brand-950/30"
+                    : "border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700")
+                }
+              >
+                <div>
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{p.display_name}</p>
+                  <p
+                    className={
+                      "mt-0.5 text-xs " +
+                      (p.available ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500")
+                    }
+                  >
+                    {p.available ? `متصل${p.version ? ` · ${p.version}` : ""}` : "در دسترس نیست"}
+                  </p>
+                </div>
+                {isSelected && <CheckCircle2 size={18} className="shrink-0 text-brand-600 dark:text-brand-400" />}
+              </button>
+            );
+          })}
+        </div>
+      </Field>
+
+      {active && (
         <div
           className={
             "rounded-xl p-3.5 text-sm " +
-            (claude.available
+            (active.available
               ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300"
-              : "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-300")
+              : "bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300")
           }
         >
-          {claude.available ? `Claude CLI متصل است (${claude.version})` : claude.unavailable_reason}
+          {active.available
+            ? `${active.display_name} متصل و آماده است.`
+            : active.unavailable_reason ?? "این ارائه‌دهنده در دسترس نیست."}
+          {!active.available && PROVIDER_CLI_PATH_KEY[selectedProvider] && (
+            <p className="mt-1 text-xs opacity-80">{PROVIDER_CLI_PATH_KEY[selectedProvider].install}</p>
+          )}
         </div>
       )}
-      <Field label="مسیر Claude CLI" hint="در صورت خالی بودن، به‌صورت خودکار جستجو می‌شود">
-        <Input
-          ltr
-          value={String(draft["ai.claude_cli_path"] ?? "")}
-          onChange={(e) => set("ai.claude_cli_path", e.target.value)}
-          placeholder="C:\Users\...\claude.exe"
-        />
-      </Field>
-      <Field label="مدل پیش‌فرض">
+
+      <div className="space-y-3 border-t border-slate-100 pt-4 dark:border-slate-800">
+        <p className="text-xs font-medium text-slate-500 dark:text-slate-400">مسیر ابزارهای خط فرمان</p>
+        {Object.entries(PROVIDER_CLI_PATH_KEY).map(([providerId, cfg]) => {
+          const info = providers?.items.find((p) => p.id === providerId);
+          return (
+            <Field
+              key={providerId}
+              label={`مسیر ${info?.display_name ?? providerId} CLI`}
+              hint="در صورت خالی بودن، به‌صورت خودکار جستجو می‌شود"
+            >
+              <Input
+                ltr
+                value={String(draft[cfg.key] ?? "")}
+                onChange={(e) => set(cfg.key, e.target.value)}
+                placeholder={cfg.placeholder}
+              />
+            </Field>
+          );
+        })}
+      </div>
+
+      <Field label={`مدل پیش‌فرض (${active?.display_name ?? selectedProvider})`}>
         <Select value={String(draft["ai.default_model"] ?? "")} onChange={(e) => set("ai.default_model", e.target.value)}>
+          <option value="">استفاده از پیشنهاد خودکار برای هر کار</option>
           {models?.items.map((m) => (
             <option key={m.id} value={m.id}>
               {m.display_name}
@@ -194,6 +283,7 @@ function AiSection({ draft, set, onSave, saving }: SectionProps) {
           ))}
         </Select>
       </Field>
+
       <Field label="زمان انتظار (ثانیه)">
         <Input
           ltr

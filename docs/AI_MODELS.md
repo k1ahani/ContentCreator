@@ -104,6 +104,46 @@ strength for it that hasn't been evaluated for these specific workloads. This
 is a real editorial choice: don't claim a model is good at something just to
 fill in a table.
 
+## Codex's single sentinel entry, and why it looks different from Claude's
+
+| id | provider | tier | endorsed for | notes |
+|---|---|---|---|---|
+| `codex-default` | codex | balanced | (none) | maps to *no* `-m` flag - the CLI's own current default |
+
+Claude gets four named entries; Codex gets one, and that asymmetry is
+deliberate rather than incomplete. While building this integration, running
+`codex exec` with no `-m` flag reported its own current default model as
+`gpt-5.6-sol` - a name that does not match any commonly assumed OpenAI
+product naming at the time. That is direct evidence that Codex's model naming
+moves faster than a hardcoded list in this codebase could responsibly claim
+to track, especially without valid credentials available to verify a
+candidate list against the real CLI.
+
+So `codex-default` is not a placeholder to be filled in later with "real"
+model names - it is the considered choice: `app/ai/providers/codex/cli.py`
+never passes `-m` for this id (see `DEFAULT_MODEL_SENTINEL` in
+`provider.py`), so the CLI always resolves whatever its *own* current default
+is. This can never go stale the way a pinned snapshot name would, at the cost
+of the platform not being able to explain *which* model will run ahead of
+time.
+
+An operator who wants a specific Codex model pinned - once they know their
+own account's available model names, which this codebase cannot know for
+them - adds it the normal way, through `config/models.json`:
+
+```json
+{
+  "models": [
+    { "id": "gpt-5.1-codex", "provider": "codex", "display_name": "GPT-5.1 Codex",
+      "good_for": ["text_editing"], "rationale_fa": "...", "speed": 3, "quality": 5 }
+  ]
+}
+```
+
+That entry's `id` becomes a real `-m gpt-5.1-codex` argument the next time it
+is selected - `CodexCLI.build_argv` passes through any model id that is not
+exactly `codex-default` literally.
+
 ## Adding a model
 
 Add a `ModelSpec` to `_BUILTIN_MODELS` in `app/ai/models.py` (or drop an entry
