@@ -1,0 +1,28 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Runtime data - never commit user content or local machine state
+storage/
+logs/
+config/.env
+config/app.json
+bin/ffmpeg/
+bin/fonts/
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Test artifacts
+backend/_smoke.db
+backend/.venv

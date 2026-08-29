@@ -25,3 +25,57 @@
 2026-08-29 01:30:06 INFO     [app.container] application ready (workers=2)
 2026-08-29 01:30:06 INFO     [app.main] listening on http://127.0.0.1:8420
 2026-08-29 01:30:14 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 06:50:31 WARNING  [app.jobs.queue] job 00tkiha7bctpw3u2 failed: asset 'nonexistent' not found
+2026-08-29 06:50:32 WARNING  [app.jobs.queue] job 00tkiha8106ti4tb failed: no transcript text to build subtitles from
+2026-08-29 06:50:34 WARNING  [app.jobs.queue] job 00tkihaa0dx0zmsx failed: track '00tkihaa3012fryh' has no cues
+2026-08-29 06:51:09 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 17572)
+2026-08-29 06:54:10 WARNING  [app.jobs.queue] job 00tkihgaav1z1txz failed: asset 'nonexistent' not found
+2026-08-29 06:54:11 WARNING  [app.jobs.queue] job 00tkihgb2ivgucy3 failed: no transcript text to build subtitles from
+2026-08-29 06:54:13 WARNING  [app.jobs.queue] job 00tkihgdd3g1lvst failed: track '00tkihgd8h50t37e' has no cues
+2026-08-29 06:54:46 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 17724)
+2026-08-29 07:17:05 INFO     [app.api.routers.projects] created project 00tkiiih402wurnf (????? ?????? ??????)
+2026-08-29 07:17:19 INFO     [app.jobs.queue] queued job 00tkiiiv8cjalvb4 (text_task)
+2026-08-29 07:17:19 INFO     [app.jobs.queue] running job 00tkiiiv8cjalvb4 (text_task)
+2026-08-29 07:17:19 INFO     [app.ai.service] AI task=text_editing provider=claude model=haiku chars=230
+2026-08-29 07:17:27 INFO     [app.jobs.queue] job 00tkiiiv8cjalvb4 completed in 8.1s
+2026-08-29 07:18:02 INFO     [app.api.routers.projects] removed workspace for project 00tkiiih402wurnf
+2026-08-29 07:21:43 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:21:44 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:21:44 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 07:21:44 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 07:21:44 INFO     [app.container] application ready (workers=2)
+2026-08-29 07:21:44 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 07:22:22 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:22:22 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:22:22 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 07:22:22 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 07:22:22 INFO     [app.container] application ready (workers=2)
+2026-08-29 07:22:22 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 07:34:24 WARNING  [app.jobs.queue] job 00tkijbb5rfpcip4 failed: asset 'nonexistent' not found
+2026-08-29 07:34:25 WARNING  [app.jobs.queue] job 00tkijbd5pmbop7h failed: no transcript text to build subtitles from
+2026-08-29 07:34:26 WARNING  [app.jobs.queue] job 00tkijbe2q6ktcgn failed: track '00tkijbe1jbcy73k' has no cues
+2026-08-29 07:34:58 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 8336)
+2026-08-29 07:36:27 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:36:28 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:36:28 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 07:36:28 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0001']
+2026-08-29 07:36:28 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 07:36:28 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 07:36:28 INFO     [app.container] application ready (workers=2)
+2026-08-29 07:36:28 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 07:38:11 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:38:11 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 07:38:11 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 07:38:11 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 07:38:11 INFO     [app.container] application ready (workers=2)
+2026-08-29 07:38:11 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 07:38:17 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 09:25:44 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 09:25:44 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 09:25:44 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 09:25:44 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0001']
+2026-08-29 09:25:44 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 09:25:44 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 09:25:44 INFO     [app.container] application ready (workers=2)
+2026-08-29 09:25:44 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 09:25:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)

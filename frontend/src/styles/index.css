@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * RTL foundation.
+ *
+ * The document is `dir="rtl"` from index.html. Everything defaults to RTL;
+ * technical content (paths, code, JSON, URLs, logs) opts INTO LTR with the
+ * `.ltr` utility below rather than the other way around, because RTL is the
+ * norm for this application per the project requirements, not an exception.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --bg: 255 255 255;
+  --bg-subtle: 248 250 252;
+  --fg: 15 23 42;
+  --fg-muted: 100 116 139;
+  --border: 226 232 240;
+  --surface: 255 255 255;
+  --surface-hover: 241 245 249;
+}
+
+.dark {
+  --bg: 10 12 18;
+  --bg-subtle: 17 20 28;
+  --fg: 241 245 249;
+  --fg-muted: 148 163 184;
+  --border: 39 45 58;
+  --surface: 20 23 32;
+  --surface-hover: 30 34 46;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+  font-feature-settings: "ss01" on, "cv01" on;
+  text-rendering: optimizeLegibility;
+}
+
+/* Technical content: paths, CLI commands, code, JSON, URLs, logs.
+   Always LTR, always monospace, inside an otherwise RTL interface. */
+.ltr {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: left;
+  font-family: "Consolas", "SFMono-Regular", Menlo, monospace;
+}
+
+/* Numbers inside Persian prose should not flip direction mid-sentence. */
+.num {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--fg-muted) / 0.5);
+}
+
+/* Focus rings that work in both themes without a UI library. */
+:focus-visible {
+  outline: 2px solid rgb(59 99 245);
+  outline-offset: 2px;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.9; }
+}
+
+.skeleton {
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+  background-color: rgb(var(--border));
+  border-radius: 0.5rem;
+}
+
+@keyframes indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
