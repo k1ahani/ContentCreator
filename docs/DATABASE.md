@@ -81,6 +81,37 @@ instead. Editing a past migration changes nothing for databases that already
 ran it, which silently desyncs schema history from what's on disk for
 existing installs.
 
+### Changing a `CHECK` constraint (adding an enum value)
+
+Enum-valued columns are constrained with `CHECK`, so adding a member to an enum
+in `app/domain/enums.py` — a new `JobType`, `AssetType`, `DocumentType` — needs
+a migration, or the database rejects the first row that uses it. SQLite cannot
+alter a `CHECK` in place; the documented workaround is to rebuild the table.
+
+`versions/0002_subtitle_sync_job.sql` is the worked example, and **the ordering
+in it is load-bearing**. Foreign keys are ON for every connection, and
+`job_logs` references `jobs` with `ON DELETE CASCADE`. Under those two facts
+`DROP TABLE jobs` performs an implicit delete of every row first, which cascades
+and silently erases the whole console-log history. So the child table is rebuilt
+and re-pointed *before* the parent is dropped:
+
+```sql
+CREATE TABLE jobs_new (...);              -- new definition
+INSERT INTO jobs_new SELECT ... FROM jobs;
+CREATE TABLE job_logs_new (... REFERENCES jobs_new (id) ON DELETE CASCADE);
+INSERT INTO job_logs_new SELECT ... FROM job_logs;
+DROP TABLE job_logs;                       -- no children, safe
+DROP TABLE jobs;                           -- now childless, nothing to cascade
+ALTER TABLE jobs_new RENAME TO jobs;       -- SQLite rewrites job_logs_new's FK
+ALTER TABLE job_logs_new RENAME TO job_logs;
+-- indexes went with the dropped tables; recreate them
+```
+
+The renames rely on SQLite ≥3.25 rewriting foreign keys that point at a renamed
+table, which is what leaves `job_logs` referencing `jobs` again at the end.
+Verify a rebuild with `PRAGMA foreign_key_check` and a row count before and
+after — a migration that quietly drops rows is the failure mode here.
+
 ## Repositories
 
 `app/db/repositories/` — **the only place raw SQL is written.** One

@@ -153,6 +153,156 @@ class TestSubtitleEndpoints:
             assert "سلام" in response.text
 
 
+class TestSubtitleRetiming:
+    """Manual/batch synchronisation, which answers inline rather than as a job."""
+
+    def _track_with_cues(self, client, spans) -> tuple[str, str]:
+        project = client.post("/api/projects", json={"name": "retime"}).json()
+        track = client.post(
+            f"/api/projects/{project['id']}/subtitles", json={"name": "t"}
+        ).json()
+        for start, end, text in spans:
+            client.post(
+                f"/api/projects/{project['id']}/subtitles/{track['id']}/cues",
+                json={"start": start, "end": end, "text": text},
+            )
+        return project["id"], track["id"]
+
+    def test_shift_moves_every_cue_and_reports_it(self, client):
+        project_id, track_id = self._track_with_cues(
+            client, [(10.0, 12.0, "اول"), (20.0, 22.0, "دوم"), (30.0, 32.0, "سوم")]
+        )
+        response = client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={"mode": "shift", "offset_seconds": -3.0},
+        )
+        assert response.status_code == 200
+        body = response.json()
+        assert [c["start"] for c in body["items"]] == [7.0, 17.0, 27.0]
+        assert body["report"]["changed_count"] == 3
+        assert body["report"]["mode"] == "shift"
+
+    def test_retime_never_changes_cue_text_or_ids(self, client):
+        project_id, track_id = self._track_with_cues(
+            client, [(0.0, 2.0, "متن اول"), (5.0, 7.0, "متن دوم")]
+        )
+        before = client.get(
+            f"/api/projects/{project_id}/subtitles/{track_id}/cues"
+        ).json()["items"]
+
+        after = client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={"mode": "scale", "factor": 2.0},
+        ).json()["items"]
+
+        assert [c["id"] for c in after] == [c["id"] for c in before]
+        assert [c["text"] for c in after] == [c["text"] for c in before]
+
+    def test_reading_speed_repacks_by_text_length(self, client):
+        project_id, track_id = self._track_with_cues(
+            client,
+            [(0.0, 5.0, "کوتاه"), (6.0, 8.0, "یک متن به مراتب طولانی‌تر از قطعه قبلی")],
+        )
+        items = client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={"mode": "reading_speed", "chars_per_second": 6.0, "start_seconds": 0.0},
+        ).json()["items"]
+
+        assert items[0]["start"] == 0.0
+        assert (items[1]["end"] - items[1]["start"]) > (items[0]["end"] - items[0]["start"])
+
+    def test_result_is_persisted_not_just_returned(self, client):
+        project_id, track_id = self._track_with_cues(client, [(10.0, 12.0, "متن")])
+        client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={"mode": "shift", "offset_seconds": 5.0},
+        )
+        stored = client.get(
+            f"/api/projects/{project_id}/subtitles/{track_id}/cues"
+        ).json()["items"]
+        assert stored[0]["start"] == 15.0
+
+    def test_clamps_inside_the_media_duration(self, client):
+        project_id, track_id = self._track_with_cues(client, [(10.0, 12.0, "متن")])
+        body = client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={
+                "mode": "shift",
+                "offset_seconds": 500.0,
+                "media_duration_seconds": 20.0,
+            },
+        ).json()
+        assert body["items"][0]["end"] <= 20.0
+        assert body["report"]["clamped_count"] == 1
+
+    def test_retimed_track_never_overlaps(self, client):
+        project_id, track_id = self._track_with_cues(
+            client, [(float(i), float(i) + 0.9, f"قطعه {i}") for i in range(8)]
+        )
+        items = client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={"mode": "scale", "factor": 0.2},
+        ).json()["items"]
+
+        for earlier, later in zip(items, items[1:]):
+            assert later["start"] >= earlier["end"]
+            assert later["end"] > later["start"]
+
+    def test_stretch_without_a_target_is_rejected(self, client):
+        project_id, track_id = self._track_with_cues(client, [(0.0, 2.0, "متن")])
+        response = client.post(
+            f"/api/projects/{project_id}/subtitles/{track_id}/retime",
+            json={"mode": "stretch"},
+        )
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "validation_error"
+
+    def test_empty_track_is_rejected_with_a_persian_message(self, client):
+        project = client.post("/api/projects", json={"name": "retime"}).json()
+        track = client.post(
+            f"/api/projects/{project['id']}/subtitles", json={"name": "t"}
+        ).json()
+        response = client.post(
+            f"/api/projects/{project['id']}/subtitles/{track['id']}/retime",
+            json={"mode": "shift", "offset_seconds": 1.0},
+        )
+        assert response.status_code == 422
+        assert "قطعه‌ای" in response.json()["error"]["message"]
+
+    def test_sync_endpoint_accepts_and_enqueues_a_job(self, client, project):
+        """The automatic path returns 202 + a job, like every long operation.
+
+        Only the router contract is asserted. The asset id deliberately does
+        not exist, so the handler fails on its first lookup instead of loading
+        a speech-recognition model - a real sync would spend minutes on ASR
+        weights, which does not belong in an HTTP contract test. Whether the
+        alignment itself is any good is asked, without that cost, in
+        ``tests/unit/test_subtitle_sync.py``.
+        """
+        track = client.post(
+            f"/api/projects/{project.id}/subtitles", json={"name": "t"}
+        ).json()
+        client.post(
+            f"/api/projects/{project.id}/subtitles/{track['id']}/cues",
+            json={"start": 0.0, "end": 2.0, "text": "سلام"},
+        )
+
+        response = client.post(
+            f"/api/projects/{project.id}/subtitles/sync",
+            json={"track_id": track["id"], "asset_id": "no-such-asset"},
+        )
+        assert response.status_code == 202
+        job = response.json()["job"]
+        assert job["type"] == "subtitle_sync"
+        assert job["input"]["track_id"] == track["id"]
+
+    def test_sync_requires_a_track_and_an_asset(self, client, project):
+        response = client.post(
+            f"/api/projects/{project.id}/subtitles/sync", json={"track_id": "x"}
+        )
+        assert response.status_code == 422
+
+
 class TestAiDiscoveryEndpoints:
     def test_providers_reports_claude(self, client):
         response = client.get("/api/ai/providers")
@@ -188,6 +338,42 @@ class TestAiDiscoveryEndpoints:
         response = client.get("/api/ai/tts/voices", params={"language": "fa"})
         voices = response.json()["items"]
         assert any(v["language"] == "fa" for v in voices)
+
+    def test_tts_providers_span_free_and_paid(self, client):
+        """Every registered provider is reported, including ones the user has
+        not configured - with *why*, so "not set up yet" is distinguishable
+        from "broken"."""
+        items = client.get("/api/ai/tts/providers").json()["items"]
+        by_id = {p["id"]: p for p in items}
+        assert {"edge", "sapi5", "elevenlabs", "openai_compatible"} <= set(by_id)
+        assert by_id["edge"]["pricing"] == "free"
+        assert by_id["elevenlabs"]["requires_api_key"] is True
+        # Unconfigured, but present and explained rather than hidden.
+        if not by_id["elevenlabs"]["available"]:
+            assert by_id["elevenlabs"]["unavailable_reason"]
+            assert by_id["elevenlabs"]["api_key_setting"] == "voice.elevenlabs_api_key"
+
+    def test_english_voices_cover_several_accents(self, client):
+        voices = client.get(
+            "/api/ai/tts/voices", params={"language": "en"}
+        ).json()["items"]
+        locales = {v["locale"] for v in voices if v["locale"]}
+        assert len(locales) >= 5, f"expected several English accents, got {locales}"
+
+    def test_voice_preview_rejects_an_unknown_voice(self, client):
+        response = client.get("/api/ai/tts/voices/no-such-voice/preview")
+        assert response.status_code == 404
+        assert response.json()["error"]["code"] == "not_found"
+
+    @pytest.mark.slow
+    def test_voice_preview_returns_playable_audio(self, client):
+        """Real synthesis through the real provider - the point of the preview
+        is that the user hears what they will actually get."""
+        response = client.get("/api/ai/tts/voices/fa-IR-DilaraNeural/preview")
+        if response.status_code != 200:
+            pytest.skip("edge-tts requires network access")
+        assert response.headers["content-type"].startswith("audio/")
+        assert len(response.content) > 1000
 
 
 class TestSettingsEndpoints:

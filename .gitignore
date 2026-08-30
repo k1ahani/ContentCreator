@@ -26,3 +26,4 @@ Thumbs.db
 # Test artifacts
 backend/_smoke.db
 backend/.venv
+/storage/

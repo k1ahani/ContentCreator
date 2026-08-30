@@ -119,6 +119,7 @@ class JobType(StrEnum):
     TRANSCRIBE = "transcribe"
     TEXT_TASK = "text_task"
     SUBTITLE_GENERATE = "subtitle_generate"
+    SUBTITLE_SYNC = "subtitle_sync"
     SUBTITLE_RENDER = "subtitle_render"
     TTS_SYNTHESIZE = "tts_synthesize"
 
@@ -254,6 +255,51 @@ class SubtitleSegmentationMode(StrEnum):
     #: Fixed word count per cue, user-specified exactly (see
     #: ``words_per_cue`` - as low as one word per cue, e.g. karaoke-style).
     CUSTOM = "custom"
+
+
+class SubtitleRetimeMode(StrEnum):
+    """How a *whole track* is retimed in one batch operation.
+
+    These are the manual counterpart to audio-based synchronisation
+    (``JobType.SUBTITLE_SYNC``): pure arithmetic on the existing cue times, no
+    media analysis, applied to every cue as a group so the user never has to
+    drag fifty cues one at a time. See ``app/media/subtitles/sync.py``.
+    """
+
+    #: Move every cue by a signed offset. Fixes "the whole track is 1.4s late".
+    SHIFT = "shift"
+    #: Multiply every timing by a factor around an anchor point. Fixes drift
+    #: that grows through the file (a frame-rate mismatch, 25 vs 23.976 fps).
+    SCALE = "scale"
+    #: Recompute each cue's duration from its own text at a target reading
+    #: speed and repack the track sequentially - "subtitle display speed".
+    READING_SPEED = "reading_speed"
+    #: Stretch or compress the track so its last cue ends at a target time,
+    #: keeping the first cue's start where it is.
+    STRETCH = "stretch"
+
+
+class SubtitleTimingSource(StrEnum):
+    """Where a track's current cue timings actually came from.
+
+    Reported by every job that writes timings so the UI can tell the user how
+    much to trust them - an honest distinction the platform has made since
+    subtitle generation shipped (see docs/SUBTITLE_SYSTEM.md).
+    """
+
+    #: Measured by the speech-recognition engine during transcription.
+    ASR_SEGMENTS = "asr_segments"
+    #: Distributed by character count over a known duration. Approximate.
+    ESTIMATED = "estimated"
+    #: Existing cue text matched against words the ASR engine measured in this
+    #: project's own audio. The strongest signal available after the fact.
+    AUDIO_ALIGNED = "audio_aligned"
+    #: Cue text could not be matched to the audio (a translated track, say), so
+    #: cues were distributed across the *speech regions* the engine found.
+    #: Better than ESTIMATED - it skips silence - but still approximate.
+    SPEECH_DISTRIBUTED = "speech_distributed"
+    #: Produced by a manual batch retime or by hand in the timeline editor.
+    MANUAL = "manual"
 
 
 # --------------------------------------------------------------------------

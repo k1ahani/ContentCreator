@@ -2,10 +2,17 @@
 
 ## Purpose
 
-How text becomes natural speech, including structured pauses. Two real
-providers ship in v1 — this is what proves the provider abstraction is
-genuine rather than aspirational (requirement: build the architecture around
-abstractions even when v1 has few implementations).
+How text becomes natural speech, including structured pauses. Four real
+providers ship — chosen to span the whole space rather than to pad a list, so
+each one is the only member of its category, and together they prove the
+provider abstraction is genuine rather than aspirational.
+
+| Provider | Cost | Network | Why it is here |
+|---|---|---|---|
+| `edge` | free | required | Real neural Persian; the quality default. |
+| `sapi5` | free | none | Works with no internet at all. |
+| `elevenlabs` | freemium | required | Best-in-class English, plus hosted voice samples. |
+| `openai_compatible` | free or paid | varies | Any OpenAI-shaped endpoint — a paid hosted one, or a free local server. |
 
 ## Provider interface
 
@@ -80,6 +87,20 @@ If Persian synthesis starts failing with a 403/handshake error again, the
 package version is the first thing to check — `pip install --upgrade
 edge-tts` and re-pin in `backend/requirements.txt` and `pyproject.toml`.
 
+The voice catalogue is **static rather than fetched per call**: the selector
+must render instantly and still work offline (an unreachable network should show
+the catalogue with a clear "needs internet" note, not an empty page), and
+Microsoft's list for these two languages changes about once a year. Run
+`python -m edge_tts --list-voices` to check it against the live service.
+
+It covers every neural voice the service has for the two languages the platform
+models — both Persian voices, and English across fourteen locales (en-US, GB,
+AU, CA, IE, IN, NZ, ZA, HK, KE, NG, PH, SG, TZ). Listing its Japanese voices
+would only offer the user hundreds of entries that produce gibberish, because a
+voice speaking a language the rest of the pipeline does not model is unusable.
+`VoiceSpec.locale` carries the full BCP-47 tag because `Language` cannot express
+accent, and with dozens of English voices the accent *is* the choice being made.
+
 ### SAPI5 (`app/tts/providers/sapi5.py`) — offline
 
 Drives Windows `System.Speech.Synthesis` through PowerShell (not a `pywin32`
@@ -92,6 +113,66 @@ at the Edge provider instead of pretending SAPI5 covers Persian.
 Text is passed to the PowerShell script via a temporary UTF-8-BOM file, not
 inline in the command, specifically so Persian text with apostrophes or other
 PowerShell-special characters can never break the script's quoting.
+
+### ElevenLabs (`app/tts/providers/elevenlabs.py`) — premium, API key
+
+Three things make it structurally different from the two above, all handled in
+that module rather than leaking into the shared layer:
+
+- **It needs a credential.** Nothing works until a key is set. That is a
+  *configuration* state, not a failure: `check_availability` reports
+  `requires_api_key` plus the exact settings key, so the UI distinguishes "you
+  have not set this up yet" from "this is broken".
+- **Its voices are multilingual and `VoiceSpec` is not.** One ElevenLabs voice
+  reads any language its model supports, while a `VoiceSpec` names exactly one.
+  Rather than choose a language for the user or list one voice twice under one
+  id, the advertised voice id carries the language (`eleven:<voice>:<lang>`),
+  which keeps ids unique and `list_voices(fa)` honest.
+- **Persian is model-dependent.** The default `eleven_multilingual_v2` lists 29
+  languages and Persian is not among them; the v3 generation covers it. Rather
+  than quietly produce mangled Persian, the availability hint says so and points
+  at the Microsoft provider. `voice.elevenlabs_model` is a setting, so a user on
+  a Persian-capable model is not blocked by that default.
+
+### OpenAI-compatible (`app/tts/providers/openai_compatible.py`) — hosted or local
+
+Written against the *protocol*, not a company, which is the whole argument for
+it: OpenAI's own endpoint and a self-hosted server (Kokoro-FastAPI, LocalAI,
+openedai-speech) implement the same `/audio/speech` route. Pointing
+`voice.openai_base_url` at `http://localhost:8880/v1` gives free, fully offline
+synthesis through the same code path — so this is not a second premium vendor,
+it is the seam through which every OpenAI-shaped service reaches the platform
+without another module. A loopback URL is detected and reported as `offline` and
+`free`, and no key is required for it.
+
+Voice discovery splits the same way: OpenAI publishes no listing endpoint, so
+the built-in names are used; compatible servers usually expose
+`GET /audio/voices`, and when one answers, its catalogue wins. A local server
+with forty voices shows forty voices. A 404 there is a normal outcome, not a
+failure — the provider stays usable with the built-in names.
+
+## Voice previews
+
+`app/tts/preview.py`, `GET /api/ai/tts/voices/{voice_id}/preview`. Choosing
+between forty voices by reading one-line descriptions is guesswork; the preview
+is what makes it listening. Two sources, in order:
+
+1. **A sample the provider already hosts** (`VoiceSpec.preview_url`). ElevenLabs
+   ships one per voice. It costs the user nothing — no quota, no characters
+   billed — which is exactly why a hosted sample always wins.
+2. **A real synthesis of one short sentence**, for providers that publish
+   nothing. Genuine output from the same path the job uses, so what the user
+   hears is what they will get.
+
+Either way the bytes are cached under `storage/.tts-temp/previews`, keyed by
+voice *and* sample text — the sentence is user-editable
+(`voice.preview_text_fa` / `_en`), so keying on the voice alone would keep
+serving the old sentence after the user changed it. Auditioning ten voices and
+going back costs ten syntheses, not twenty, and a paid provider is never billed
+for a sample the platform already holds.
+
+The voice id is a `{voice_id:path}` route parameter so composed ids containing a
+colon survive routing intact.
 
 ## Guarantees
 
@@ -107,9 +188,25 @@ PowerShell-special characters can never break the script's quoting.
 
 Implement `TTSProvider` in `app/tts/providers/<name>.py`, register it in
 `TTSRegistry.build()` (`app/tts/registry.py`) — append one line. It appears
-automatically in `GET /api/ai/tts/providers` and `GET /api/ai/tts/voices`;
-the frontend voice selector renders whatever the registry reports, with no
-provider name ever hardcoded in `frontend/src/pages/project/SpeechPage.tsx`.
+automatically in `GET /api/ai/tts/providers` and `GET /api/ai/tts/voices`, in
+the voice picker with a working preview button, and in the settings page's
+provider-status list; the frontend renders whatever the registry reports, with
+no provider name ever hardcoded in
+`frontend/src/pages/project/SpeechPage.tsx` or
+`frontend/src/components/tts/VoicePicker.tsx`.
+
+If it needs a credential or an endpoint, add the keys to
+`SettingsService.DEFAULTS` under `voice.*` and read them in `build()`. Note that
+`ServiceContainer.invalidate` **drops and rebuilds** the whole registry on any
+`voice.*` change rather than only clearing the availability cache: a key or base
+URL is baked into a provider instance at construction, so a cache clear alone
+would leave the old credential in use until the next restart.
+
+For an HTTP-backed provider use `app/tts/http.py` rather than reaching for
+`requests`. Its real job is error translation — a raw `URLError` reaching the UI
+would show "urlopen error [Errno 11001] getaddrinfo failed" inside a Persian
+interface; everything there fails as a `TTSError` with a Persian `user_message`
+and an actionable `hint`.
 
 ## Common mistakes
 

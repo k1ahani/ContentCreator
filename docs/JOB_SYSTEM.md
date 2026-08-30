@@ -126,6 +126,15 @@ keeping both the backend publisher and the frontend reducer small.
    silently does nothing.
 5. Add a router endpoint that submits it (`app/api/routers/jobs.py`) and a
    corresponding request schema if needed (`app/api/schemas/requests.py`).
+6. **Write a migration.** This step is easy to miss and fails at runtime rather
+   than at startup: `jobs.type` carries a `CHECK` constraint listing every job
+   type, so a new value is rejected by the database when the first job is
+   submitted, long after `verify_complete()` has passed. SQLite cannot alter a
+   `CHECK` in place, so the migration rebuilds the table —
+   `versions/0002_subtitle_sync_job.sql` is the worked example, and its ordering
+   is load-bearing: `job_logs` cascades on delete from `jobs`, so it must be
+   rebuilt and re-pointed *before* the old `jobs` table is dropped, or dropping
+   it silently erases the entire console-log history.
 
 A handler is a plain function:
 

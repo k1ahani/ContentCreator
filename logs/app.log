@@ -389,3 +389,528 @@
 2026-08-29 17:37:33 INFO     [app.jobs.queue] queued job 00tkjb8l6tm2ypdh (subtitle_generate)
 2026-08-29 17:37:33 INFO     [app.jobs.queue] running job 00tkjb8l6tm2ypdh (subtitle_generate)
 2026-08-29 17:37:33 INFO     [app.jobs.queue] job 00tkjb8l6tm2ypdh completed in 0.0s
+2026-08-29 17:39:29 INFO     [app.transcription.providers.faster_whisper_provider] transcribed followups.ogg: 18 segments, 78.1s audio in 287.8s
+2026-08-29 17:39:29 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=611
+2026-08-29 17:39:34 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=554
+2026-08-29 17:40:09 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=587
+2026-08-29 17:40:14 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=636
+2026-08-29 17:40:19 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=552
+2026-08-29 17:40:23 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=572
+2026-08-29 17:40:29 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=562
+2026-08-29 17:40:33 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=606
+2026-08-29 17:40:37 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=603
+2026-08-29 17:40:42 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=583
+2026-08-29 17:40:46 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=593
+2026-08-29 17:40:51 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=667
+2026-08-29 17:40:56 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=676
+2026-08-29 17:41:01 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=561
+2026-08-29 17:41:21 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=558
+2026-08-29 17:41:30 INFO     [app.jobs.queue] job 00tkjb3g8m4ke39j completed in 422.6s
+2026-08-29 17:42:22 INFO     [app.jobs.queue] queued job 00tkjbgm7sy7turw (subtitle_generate)
+2026-08-29 17:42:22 INFO     [app.jobs.queue] running job 00tkjbgm7sy7turw (subtitle_generate)
+2026-08-29 17:42:22 INFO     [app.jobs.queue] job 00tkjbgm7sy7turw completed in 0.0s
+2026-08-29 17:42:40 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:40 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:42:43 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:43 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:42:45 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:45 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:42:57 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:57 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:43:38 INFO     [app.jobs.queue] queued job 00tkjbiq5gny808n (tts_synthesize)
+2026-08-29 17:43:38 INFO     [app.jobs.queue] running job 00tkjbiq5gny808n (tts_synthesize)
+2026-08-29 17:43:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:43:45 INFO     [app.jobs.queue] job 00tkjbiq5gny808n completed in 7.1s
+2026-08-29 17:48:00 INFO     [app.jobs.queue] queued job 00tkjbq0blxgchjt (subtitle_generate)
+2026-08-29 17:48:00 INFO     [app.jobs.queue] running job 00tkjbq0blxgchjt (subtitle_generate)
+2026-08-29 17:48:00 INFO     [app.jobs.queue] job 00tkjbq0blxgchjt completed in 0.0s
+2026-08-29 17:48:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:48:31 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:48:45 INFO     [app.services.settings] updated 3 setting(s): ['transcription.auto_refine', 'transcription.model_size', 'transcription.vad_filter']
+2026-08-29 17:48:47 INFO     [app.services.settings] updated 3 setting(s): ['transcription.auto_refine', 'transcription.model_size', 'transcription.vad_filter']
+2026-08-29 17:48:50 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:49:00 INFO     [app.jobs.queue] queued job 00tkjbro2lpcjn32 (transcribe)
+2026-08-29 17:49:00 INFO     [app.jobs.queue] running job 00tkjbro2lpcjn32 (transcribe)
+2026-08-29 17:49:00 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-29 17:49:01 WARNING  [huggingface_hub.utils._http] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-29 17:54:54 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:35:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:48:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:48:11 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 18:48:12 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 18:48:12 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 18:48:12 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 18:48:12 INFO     [app.container] marked 1 interrupted job(s) as failed
+2026-08-29 18:48:12 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 18:48:12 INFO     [app.container] application ready (workers=2)
+2026-08-29 18:48:12 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 18:48:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:48:51 INFO     [app.api.routers.projects] created project 00tkjejf08vlp98f (تست)
+2026-08-29 18:48:58 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:49:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:49:13 INFO     [app.jobs.queue] queued job 00tkjek1bn4plg6a (audio_extract)
+2026-08-29 18:49:13 INFO     [app.jobs.queue] running job 00tkjek1bn4plg6a (audio_extract)
+2026-08-29 18:49:13 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:49:14 INFO     [app.media.audio] extracting audio: sarbarg.mp4 -> sarbarg.ogg (preset=opus, duration=79.4s)
+2026-08-29 18:49:15 INFO     [app.jobs.queue] job 00tkjek1bn4plg6a completed in 2.0s
+2026-08-29 18:49:24 INFO     [app.jobs.queue] queued job 00tkjekc9jfiqfax (transcribe)
+2026-08-29 18:49:24 INFO     [app.jobs.queue] running job 00tkjekc9jfiqfax (transcribe)
+2026-08-29 18:49:24 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-29 17:39:29 INFO     [app.transcription.providers.faster_whisper_provider] transcribed followups.ogg: 18 segments, 78.1s audio in 287.8s
+2026-08-29 17:39:29 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=611
+2026-08-29 17:39:34 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=554
+2026-08-29 17:40:09 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=587
+2026-08-29 17:40:14 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=636
+2026-08-29 17:40:19 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=552
+2026-08-29 17:40:23 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=572
+2026-08-29 17:40:29 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=562
+2026-08-29 17:40:33 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=606
+2026-08-29 17:40:37 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=603
+2026-08-29 17:40:42 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=583
+2026-08-29 17:40:46 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=593
+2026-08-29 17:40:51 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=667
+2026-08-29 17:40:56 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=676
+2026-08-29 17:41:01 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=561
+2026-08-29 17:41:21 INFO     [app.ai.service] AI task=transcription_refinement provider=claude model=sonnet chars=558
+2026-08-29 17:41:30 INFO     [app.jobs.queue] job 00tkjb3g8m4ke39j completed in 422.6s
+2026-08-29 17:42:22 INFO     [app.jobs.queue] queued job 00tkjbgm7sy7turw (subtitle_generate)
+2026-08-29 17:42:22 INFO     [app.jobs.queue] running job 00tkjbgm7sy7turw (subtitle_generate)
+2026-08-29 17:42:22 INFO     [app.jobs.queue] job 00tkjbgm7sy7turw completed in 0.0s
+2026-08-29 17:42:40 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:40 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:42:43 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:43 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:42:45 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:45 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:42:57 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 17:42:57 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 17:43:38 INFO     [app.jobs.queue] queued job 00tkjbiq5gny808n (tts_synthesize)
+2026-08-29 17:43:38 INFO     [app.jobs.queue] running job 00tkjbiq5gny808n (tts_synthesize)
+2026-08-29 17:43:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:43:45 INFO     [app.jobs.queue] job 00tkjbiq5gny808n completed in 7.1s
+2026-08-29 17:48:00 INFO     [app.jobs.queue] queued job 00tkjbq0blxgchjt (subtitle_generate)
+2026-08-29 17:48:00 INFO     [app.jobs.queue] running job 00tkjbq0blxgchjt (subtitle_generate)
+2026-08-29 17:48:00 INFO     [app.jobs.queue] job 00tkjbq0blxgchjt completed in 0.0s
+2026-08-29 17:48:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:48:31 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:48:45 INFO     [app.services.settings] updated 3 setting(s): ['transcription.auto_refine', 'transcription.model_size', 'transcription.vad_filter']
+2026-08-29 17:48:47 INFO     [app.services.settings] updated 3 setting(s): ['transcription.auto_refine', 'transcription.model_size', 'transcription.vad_filter']
+2026-08-29 17:48:50 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 17:49:00 INFO     [app.jobs.queue] queued job 00tkjbro2lpcjn32 (transcribe)
+2026-08-29 17:49:00 INFO     [app.jobs.queue] running job 00tkjbro2lpcjn32 (transcribe)
+2026-08-29 17:49:00 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-29 17:49:01 WARNING  [huggingface_hub.utils._http] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-29 17:54:54 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:35:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:48:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:48:11 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 18:48:12 WARNING  [__main__] port 8420 is not available on this machine, using 8421 instead
+2026-08-29 18:48:12 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 18:48:12 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 18:48:12 INFO     [app.container] marked 1 interrupted job(s) as failed
+2026-08-29 18:48:12 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 18:48:12 INFO     [app.container] application ready (workers=2)
+2026-08-29 18:48:12 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 18:48:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:48:51 INFO     [app.api.routers.projects] created project 00tkjejf08vlp98f (تست)
+2026-08-29 18:48:58 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:49:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:49:13 INFO     [app.jobs.queue] queued job 00tkjek1bn4plg6a (audio_extract)
+2026-08-29 18:49:13 INFO     [app.jobs.queue] running job 00tkjek1bn4plg6a (audio_extract)
+2026-08-29 18:49:13 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 18:49:14 INFO     [app.media.audio] extracting audio: sarbarg.mp4 -> sarbarg.ogg (preset=opus, duration=79.4s)
+2026-08-29 18:49:15 INFO     [app.jobs.queue] job 00tkjek1bn4plg6a completed in 2.0s
+2026-08-29 18:49:24 INFO     [app.jobs.queue] queued job 00tkjekc9jfiqfax (transcribe)
+2026-08-29 18:49:24 INFO     [app.jobs.queue] running job 00tkjekc9jfiqfax (transcribe)
+2026-08-29 18:49:24 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-29 18:53:14 INFO     [app.api.errors] not_found: project '00tkjb272o97eblr' not found
+2026-08-29 18:53:14 INFO     [app.api.errors] not_found: job '00tkjbro2lpcjn32' not found
+2026-08-29 18:53:14 INFO     [app.api.errors] not_found: job '00tkjbro2lpcjn32' not found
+2026-08-29 18:53:14 INFO     [app.api.errors] not_found: project '00tkjb272o97eblr' not found
+2026-08-29 18:53:15 INFO     [app.api.errors] not_found: project '00tkjb272o97eblr' not found
+2026-08-29 18:53:15 INFO     [app.api.errors] not_found: project '00tkjb272o97eblr' not found
+2026-08-29 19:02:58 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:08:13 WARNING  [app.jobs.queue] job 00tkjekc9jfiqfax failed: could not load whisper model 'large-v3': mkl_malloc: failed to allocate memory
+2026-08-29 19:08:13 ERROR    [app.jobs.context] could not persist 3 log line(s) for job 00tkjbro2lpcjn32
+Traceback (most recent call last):
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\transcription\providers\faster_whisper_provider.py", line 183, in _load_model
+    model = WhisperModel(
+            ^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 647, in __init__
+    self.model = ctranslate2.models.Whisper(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mkl_malloc: failed to allocate memory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\queue.py", line 207, in _run_job
+    output = handler(context) or {}
+             ^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\handlers\transcribe.py", line 103, in handle_transcribe
+    result = engine.transcribe(
+             ^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\transcription\providers\faster_whisper_provider.py", line 222, in transcribe
+    model = self._load_model(model_size, on_log)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\transcription\providers\faster_whisper_provider.py", line 191, in _load_model
+    raise TranscriptionEngineNotAvailableError(
+app.core.errors.TranscriptionEngineNotAvailableError: could not load whisper model 'large-v3': mkl_malloc: failed to allocate memory
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\context.py", line 146, in flush_logs
+    self.jobs_repo.append_logs(self.job.id, pending)
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\db\repositories\jobs.py", line 154, in append_logs
+    self.db.connection.executemany(
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-08-29 19:08:13 WARNING  [app.jobs.queue] job 00tkjbro2lpcjn32 failed: could not load whisper model 'large-v3': mkl_malloc: failed to allocate memory
+2026-08-29 19:12:30 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:17:26 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:17:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:18:29 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:19:01 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:19:32 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:20:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:20:36 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 19:37:36 INFO     [app.jobs.queue] queued job 00tkjgso1p0kubyz (transcribe)
+2026-08-29 19:37:36 INFO     [app.jobs.queue] running job 00tkjgso1p0kubyz (transcribe)
+2026-08-29 19:37:36 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-29 19:38:06 WARNING  [app.jobs.queue] job 00tkjgso1p0kubyz failed: could not load whisper model 'large-v3': mkl_malloc: failed to allocate memory
+2026-08-29 20:22:00 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 20:22:00 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 20:22:00 INFO     [app.jobs.registry] all 6 job type(s) have handlers
+2026-08-29 20:22:00 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-29 20:22:00 INFO     [app.container] application ready (workers=2)
+2026-08-29 20:22:00 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-29 20:22:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 20:22:36 INFO     [app.jobs.queue] queued job 00tkjivobrlw7tq2 (transcribe)
+2026-08-29 20:22:36 INFO     [app.jobs.queue] running job 00tkjivobrlw7tq2 (transcribe)
+2026-08-29 20:22:36 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-29 20:23:13 INFO     [app.transcription.providers.faster_whisper_provider] model 'large-v3' ready in 36.9s
+2026-08-29 20:23:14 INFO     [faster_whisper] Processing audio with duration 01:19.366
+2026-08-29 20:23:15 INFO     [faster_whisper] VAD filter removed 00:00.000 of audio
+2026-08-29 20:32:32 INFO     [app.transcription.providers.faster_whisper_provider] transcribed sarbarg.ogg: 6 segments, 79.4s audio in 559.1s
+2026-08-29 20:32:32 INFO     [app.jobs.queue] job 00tkjivobrlw7tq2 completed in 596.1s
+2026-08-29 20:38:11 INFO     [app.jobs.queue] queued job 00tkjjln9s17jng2 (text_task)
+2026-08-29 20:38:11 INFO     [app.jobs.queue] running job 00tkjjln9s17jng2 (text_task)
+2026-08-29 20:38:11 INFO     [app.ai.service] AI task=general provider=claude model=sonnet chars=1314
+2026-08-29 20:38:25 INFO     [app.jobs.queue] job 00tkjjln9s17jng2 completed in 14.4s
+2026-08-29 20:56:06 INFO     [app.jobs.queue] queued job 00tkjkfi966ssxl8 (subtitle_generate)
+2026-08-29 20:56:06 INFO     [app.jobs.queue] running job 00tkjkfi966ssxl8 (subtitle_generate)
+2026-08-29 20:56:06 INFO     [app.jobs.queue] job 00tkjkfi966ssxl8 completed in 0.0s
+2026-08-29 20:56:53 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be greater than or equal to 8'}]
+2026-08-29 20:56:53 INFO     [app.api.errors] request validation failed: [{'field': 'style.font_size', 'issue': 'Input should be less than or equal to 200'}]
+2026-08-29 20:57:00 INFO     [app.api.errors] request validation failed: [{'field': 'style.background_color', 'issue': "Value error, expected #RRGGBB colour, got ''"}]
+2026-08-29 20:57:38 INFO     [app.jobs.queue] queued job 00tkjki2bsujn8o2 (subtitle_generate)
+2026-08-29 20:57:38 INFO     [app.jobs.queue] running job 00tkjki2bsujn8o2 (subtitle_generate)
+2026-08-29 20:57:38 INFO     [app.jobs.queue] job 00tkjki2bsujn8o2 completed in 0.0s
+2026-08-29 21:04:29 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 21:07:31 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 21:10:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 21:11:30 INFO     [app.jobs.queue] queued job 00tkjl560bvtb08p (subtitle_render)
+2026-08-29 21:11:30 INFO     [app.jobs.queue] running job 00tkjl560bvtb08p (subtitle_render)
+2026-08-29 21:11:30 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-29 21:11:31 INFO     [app.media.video] rendering subtitles: sarbarg.mp4 (25 cues, quality=balanced) -> sarbarg-subtitled.mp4
+2026-08-29 21:11:59 INFO     [app.jobs.queue] job 00tkjl560bvtb08p completed in 29.0s
+2026-08-29 22:27:19 WARNING  [app.jobs.queue] job 00tkjonj93toctk6 failed: asset 'nonexistent' not found
+2026-08-29 22:27:20 WARNING  [app.jobs.queue] job 00tkjonk5nzlx5cf failed: no transcript text to build subtitles from
+2026-08-29 22:27:22 WARNING  [app.jobs.queue] job 00tkjonm6wbwot10 failed: track '00tkjonm0uc0c9j2' has no cues
+2026-08-29 22:27:43 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 17344)
+2026-08-29 22:35:18 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 22:35:18 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 22:35:40 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 22:35:40 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 22:35:40 INFO     [app.db.migrations.runner] applying migration 0002 (0002_subtitle_sync_job.sql), 11 statements
+2026-08-29 22:35:40 INFO     [app.db.migrations.runner] applied 2 migration(s): ['0001', '0002']
+2026-08-29 22:35:40 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-29 22:35:40 INFO     [app.jobs.queue] job queue started with 1 worker(s)
+2026-08-29 22:35:40 INFO     [app.container] application ready (workers=1)
+2026-08-29 22:39:40 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-29 22:39:40 INFO     [app.db.migrations.runner] applying migration 0001 (0001_initial.sql), 21 statements
+2026-08-29 22:39:40 INFO     [app.db.migrations.runner] applying migration 0002 (0002_subtitle_sync_job.sql), 11 statements
+2026-08-29 22:39:40 INFO     [app.db.migrations.runner] applied 2 migration(s): ['0001', '0002']
+2026-08-29 22:39:40 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-29 22:39:40 INFO     [app.jobs.queue] job queue started with 1 worker(s)
+2026-08-29 22:39:40 INFO     [app.container] application ready (workers=1)
+2026-08-29 22:40:25 WARNING  [huggingface_hub.utils._http] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-29 22:46:16 WARNING  [app.jobs.queue] job 00tkjpj45pg2wgdm failed: asset 'no-such-asset' not found
+2026-08-30 00:57:22 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 00:57:23 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 00:57:23 INFO     [app.db.migrations.runner] applying migration 0002 (0002_subtitle_sync_job.sql), 11 statements
+2026-08-30 00:57:23 INFO     [app.db.migrations.runner] applied 1 migration(s): ['0002']
+2026-08-30 00:57:23 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 00:57:23 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 00:57:23 INFO     [app.container] application ready (workers=2)
+2026-08-30 00:57:23 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 00:57:25 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 00:57:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 00:58:01 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 00:58:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 00:58:30 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 00:59:02 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 00:59:34 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:00:06 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:00:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:01:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:01:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:02:14 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:02:45 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:03:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:03:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:04:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:04:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:05:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:05:55 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:06:27 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:06:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:07:31 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:08:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:08:36 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:09:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:09:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:10:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:10:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:11:15 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:11:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:12:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:12:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:13:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:13:55 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:14:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:14:58 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:15:31 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:16:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:16:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:17:05 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:17:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:18:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:18:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:19:14 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:19:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:20:18 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:20:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:21:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:21:55 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:22:27 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:22:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:23:31 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:24:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:24:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:25:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:25:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:26:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:26:44 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:27:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:27:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:28:20 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:28:52 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:29:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:29:55 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:30:27 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:30:58 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 01:38:08 INFO     [app.jobs.queue] queued job 00tkjxhk6daw84gn (subtitle_generate)
+2026-08-30 01:38:08 INFO     [app.jobs.queue] running job 00tkjxhk6daw84gn (subtitle_generate)
+2026-08-30 01:38:08 INFO     [app.jobs.queue] job 00tkjxhk6daw84gn completed in 0.0s
+2026-08-30 04:14:36 WARNING  [app.jobs.queue] job 00tkk4qc4jkxffuc failed: asset 'no-such-asset' not found
+2026-08-30 04:14:56 WARNING  [app.jobs.queue] job 00tkk4qw288xvtqt failed: asset 'nonexistent' not found
+2026-08-30 04:14:58 WARNING  [app.jobs.queue] job 00tkk4qy4vz4te81 failed: no transcript text to build subtitles from
+2026-08-30 04:15:04 WARNING  [app.jobs.queue] job 00tkk4r420mle61u failed: track '00tkk4r421n3jm7j' has no cues
+2026-08-30 04:15:31 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 23516)
+2026-08-30 04:15:53 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 04:15:53 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 04:15:53 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 04:15:53 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 04:15:53 INFO     [app.container] application ready (workers=2)
+2026-08-30 04:15:53 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 04:16:17 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 04:17:28 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 04:17:28 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 04:17:28 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 04:17:28 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 04:17:28 INFO     [app.container] application ready (workers=2)
+2026-08-30 04:17:28 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 04:17:47 INFO     [app.api.routers.projects] created project 00tkk4vndxeel0qq (sync-check)
+2026-08-30 04:17:48 INFO     [app.api.routers.subtitles] retimed track 00tkk4vn4g2i9vob with mode shift: 3/3 cues moved
+2026-08-30 04:17:48 INFO     [app.api.routers.subtitles] retimed track 00tkk4vn4g2i9vob with mode reading_speed: 3/3 cues moved
+2026-08-30 04:17:48 INFO     [app.api.routers.subtitles] retimed track 00tkk4vn4g2i9vob with mode stretch: 3/3 cues moved
+2026-08-30 04:17:48 INFO     [app.api.routers.projects] removed workspace for project 00tkk4vndxeel0qq
+2026-08-30 04:19:08 WARNING  [huggingface_hub.utils._http] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-30 04:35:53 WARNING  [app.jobs.queue] job 00tkk5pt8n552vgz failed: asset 'no-such-asset' not found
+2026-08-30 04:36:07 WARNING  [app.jobs.queue] job 00tkk5q73pgma9jw failed: asset 'nonexistent' not found
+2026-08-30 04:36:09 WARNING  [app.jobs.queue] job 00tkk5q916zcwjau failed: no transcript text to build subtitles from
+2026-08-30 04:36:10 WARNING  [app.jobs.queue] job 00tkk5qa04hnaufn failed: track '00tkk5qa6rw3sczg' has no cues
+2026-08-30 04:36:40 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 23828)
+2026-08-30 04:41:43 WARNING  [app.jobs.queue] job 00tkk5zj347wdarz failed: asset 'no-such-asset' not found
+2026-08-30 04:41:59 WARNING  [app.jobs.queue] job 00tkk5zz8ray9hmj failed: asset 'nonexistent' not found
+2026-08-30 04:42:00 WARNING  [app.jobs.queue] job 00tkk6008scykxrx failed: no transcript text to build subtitles from
+2026-08-30 04:42:02 WARNING  [app.jobs.queue] job 00tkk602aa0c2021 failed: track '00tkk6024g9phegr' has no cues
+2026-08-30 04:42:26 WARNING  [app.process.runner] timeout after 1s, killing E:\LoyalAxis\ContentCreatorApp\backend\.venv\Scripts\python.exe (pid 14672)
+2026-08-30 04:42:59 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 04:42:59 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 04:42:59 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 04:42:59 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 04:42:59 INFO     [app.container] application ready (workers=2)
+2026-08-30 04:42:59 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 11:55:43 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 11:55:44 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 11:55:44 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 11:55:44 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 11:55:44 INFO     [app.container] application ready (workers=2)
+2026-08-30 11:55:44 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 11:55:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 11:56:01 INFO     [app.jobs.queue] queued job 00tkkq3d80mi2rt3 (subtitle_generate)
+2026-08-30 11:56:01 INFO     [app.jobs.queue] running job 00tkkq3d80mi2rt3 (subtitle_generate)
+2026-08-30 11:56:01 INFO     [app.jobs.queue] job 00tkkq3d80mi2rt3 completed in 0.0s
+2026-08-30 11:57:37 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 11:58:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 11:58:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:17:22 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 15:17:22 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 15:17:22 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 15:17:22 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 15:17:22 INFO     [app.container] application ready (workers=2)
+2026-08-30 15:17:22 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 15:17:25 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:17:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:17:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:18:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:18:29 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:20:02 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:46:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:47:15 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:47:45 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:48:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:48:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:49:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:49:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:50:17 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:50:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:51:18 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:51:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:52:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:52:49 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:53:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:53:49 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:54:20 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:54:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:55:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:55:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:56:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:57:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:57:33 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:58:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:58:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:59:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:59:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:00:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:00:40 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:01:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:01:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:02:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:02:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:03:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:03:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:04:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:04:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:05:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:05:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:06:21 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:06:52 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:07:27 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:07:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:08:32 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:09:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:09:33 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:10:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:10:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:11:06 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:11:36 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:12:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:12:37 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:13:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:13:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:14:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:14:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:15:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:15:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:16:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:16:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:17:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:17:52 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:18:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:18:53 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:19:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:19:53 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:20:24 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:20:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:21:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:22:06 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:22:37 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:23:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:23:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:24:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:24:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:25:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:25:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:26:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:26:40 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:27:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:27:40 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:28:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:28:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:29:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:29:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:30:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:30:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:31:17 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:31:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:32:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:32:53 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:33:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:33:54 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:34:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:34:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:35:34 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:36:05 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:36:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:51:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:52:37 INFO     [app.jobs.queue] queued job 00tklc5p8wkweawl (subtitle_generate)
+2026-08-30 19:52:37 INFO     [app.jobs.queue] running job 00tklc5p8wkweawl (subtitle_generate)
+2026-08-30 19:52:37 INFO     [app.jobs.queue] job 00tklc5p8wkweawl completed in 0.0s
+2026-08-30 19:53:07 INFO     [app.api.routers.subtitles] retimed track 00tklc5p9lyikenx with mode shift: 65/65 cues moved
+2026-08-30 19:53:28 INFO     [app.api.routers.subtitles] retimed track 00tklc5p9lyikenx with mode shift: 65/65 cues moved
+2026-08-30 19:53:32 INFO     [app.api.routers.subtitles] retimed track 00tklc5p9lyikenx with mode shift: 65/65 cues moved
+2026-08-30 19:53:46 INFO     [app.jobs.queue] queued job 00tklc7m2y8jlf88 (subtitle_sync)
+2026-08-30 19:53:46 INFO     [app.jobs.queue] running job 00tklc7m2y8jlf88 (subtitle_sync)
+2026-08-30 19:53:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:53:47 INFO     [app.media.audio] extracting audio: sarbarg.mp4 -> sync-00tkjek0345qxkth.wav (preset=wav, duration=79.4s)
+2026-08-30 19:53:48 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-30 19:54:15 INFO     [app.transcription.providers.faster_whisper_provider] model 'large-v3' ready in 27.1s
+2026-08-30 19:54:15 INFO     [faster_whisper] Processing audio with duration 01:19.366
+2026-08-30 19:54:16 INFO     [faster_whisper] VAD filter removed 00:00.000 of audio
+2026-08-30 20:00:46 ERROR    [app.jobs.queue] job 00tklc7m2y8jlf88 raised an unexpected error
+Traceback (most recent call last):
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\queue.py", line 207, in _run_job
+    output = handler(context) or {}
+             ^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\handlers\subtitle_sync.py", line 104, in handle_subtitle_sync
+    segments, language = _measure(ctx, audio_path)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\handlers\subtitle_sync.py", line 229, in _measure
+    result = engine.transcribe(
+             ^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\transcription\providers\faster_whisper_provider.py", line 272, in transcribe
+    for index, segment in enumerate(segments_iter):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 1809, in restore_speech_timestamps
+    for segment in segments:
+                   ^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 1148, in generate_segments
+    encoder_output = self.encode(segment)
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 1358, in encode
+    return self.model.encode(features, to_cpu=to_cpu)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mkl_malloc: failed to allocate memory

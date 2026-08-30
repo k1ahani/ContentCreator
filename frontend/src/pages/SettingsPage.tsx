@@ -16,7 +16,7 @@ import { Save, RotateCcw, FolderOpen, CheckCircle2 } from "lucide-react";
 import { settingsApi, aiApi, systemApi } from "@/lib/api/resources";
 import { StylePanel } from "@/components/subtitle/StylePanel";
 import { FilePickerDialog } from "@/components/media/FilePickerDialog";
-import { Tabs, Card, CardBody, Field, Input, Select, Button, toast } from "@/components/ui";
+import { Tabs, Card, CardBody, Field, Input, Select, Button, Badge, toast } from "@/components/ui";
 import { ApiError } from "@/lib/api/client";
 import type { SubtitleStyle } from "@/lib/api/types";
 
@@ -414,7 +414,25 @@ function SubtitleSection({ draft, set, onSave, saving }: SectionProps) {
 function VoiceSection({ draft, set, onSave, saving }: SectionProps) {
   const language = String(draft["voice.language"] ?? "fa") as "fa" | "en";
   const { data: voices } = useQuery({ queryKey: ["voices", language], queryFn: () => aiApi.voices({ language }) });
-  const keys = ["voice.language", "voice.voice_id", "voice.rate", "voice.output_format"];
+  // Refreshed, not cached: this section is where a user pastes an API key,
+  // and the whole point is seeing the provider flip to available afterwards.
+  const { data: providers } = useQuery({
+    queryKey: ["ttsProviders", "settings"],
+    queryFn: () => aiApi.ttsProviders(true),
+  });
+  const keys = [
+    "voice.language",
+    "voice.voice_id",
+    "voice.rate",
+    "voice.output_format",
+    "voice.elevenlabs_api_key",
+    "voice.elevenlabs_model",
+    "voice.openai_api_key",
+    "voice.openai_base_url",
+    "voice.openai_model",
+    "voice.preview_text_fa",
+    "voice.preview_text_en",
+  ];
 
   return (
     <div className="space-y-4">
@@ -439,6 +457,106 @@ function VoiceSection({ draft, set, onSave, saving }: SectionProps) {
           <option value="wav">WAV</option>
         </Select>
       </Field>
+
+      {/*
+        Provider status, straight from the registry. An unconfigured
+        provider is listed with its reason rather than hidden, so "needs a
+        key" reads as a next step instead of a missing feature.
+      */}
+      <div className="rounded-xl border border-slate-200 p-3.5 dark:border-slate-800">
+        <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          وضعیت موتورهای تولید گفتار
+        </p>
+        <div className="space-y-1.5">
+          {providers?.items.map((provider) => (
+            <div key={provider.id} className="flex flex-wrap items-center gap-2 text-xs">
+              <Badge tone={provider.available ? "success" : "warning"}>
+                {provider.available ? "آماده" : "پیکربندی نشده"}
+              </Badge>
+              <span className="text-slate-700 dark:text-slate-300">{provider.display_name}</span>
+              {provider.available && (
+                <span className="text-slate-400">{provider.voice_count} صدا</span>
+              )}
+              {provider.offline && <span className="text-slate-400">· بدون نیاز به اینترنت</span>}
+              {!provider.available && provider.unavailable_reason && (
+                <span className="text-slate-500 dark:text-slate-400">
+                  {provider.unavailable_reason}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Field
+        label="کلید API سرویس ElevenLabs"
+        hint="اختیاری - برای استفاده از صداهای ElevenLabs. خالی بگذارید تا این موتور غیرفعال بماند."
+      >
+        <Input
+          type="password"
+          ltr
+          autoComplete="off"
+          value={String(draft["voice.elevenlabs_api_key"] ?? "")}
+          onChange={(e) => set("voice.elevenlabs_api_key", e.target.value)}
+          placeholder="sk_..."
+        />
+      </Field>
+      <Field label="مدل ElevenLabs" hint="برای پشتیبانی رسمی از فارسی به یک مدل نسل v3 تغییر دهید.">
+        <Input
+          ltr
+          value={String(draft["voice.elevenlabs_model"] ?? "")}
+          onChange={(e) => set("voice.elevenlabs_model", e.target.value)}
+          placeholder="eleven_multilingual_v2"
+        />
+      </Field>
+
+      <Field
+        label="کلید API سرویس سازگار با OpenAI"
+        hint="برای سرور محلی لازم نیست؛ فقط برای سرویس‌های ابری."
+      >
+        <Input
+          type="password"
+          ltr
+          autoComplete="off"
+          value={String(draft["voice.openai_api_key"] ?? "")}
+          onChange={(e) => set("voice.openai_api_key", e.target.value)}
+          placeholder="sk-..."
+        />
+      </Field>
+      <Field
+        label="آدرس سرویس سازگار با OpenAI"
+        hint="برای تولید گفتار رایگان و کاملاً آفلاین، آدرس یک سرور محلی مانند http://localhost:8880/v1 را وارد کنید."
+      >
+        <Input
+          ltr
+          value={String(draft["voice.openai_base_url"] ?? "")}
+          onChange={(e) => set("voice.openai_base_url", e.target.value)}
+          placeholder="https://api.openai.com/v1"
+        />
+      </Field>
+      <Field label="مدل سرویس سازگار با OpenAI">
+        <Input
+          ltr
+          value={String(draft["voice.openai_model"] ?? "")}
+          onChange={(e) => set("voice.openai_model", e.target.value)}
+          placeholder="gpt-4o-mini-tts"
+        />
+      </Field>
+
+      <Field label="متن نمونه صدا (فارسی)" hint="همان جمله‌ای که هنگام پیش‌نمایش هر صدا خوانده می‌شود.">
+        <Input
+          value={String(draft["voice.preview_text_fa"] ?? "")}
+          onChange={(e) => set("voice.preview_text_fa", e.target.value)}
+        />
+      </Field>
+      <Field label="متن نمونه صدا (انگلیسی)">
+        <Input
+          ltr
+          value={String(draft["voice.preview_text_en"] ?? "")}
+          onChange={(e) => set("voice.preview_text_en", e.target.value)}
+        />
+      </Field>
+
       <SaveBar onSave={onSave} keys={keys} saving={saving} />
     </div>
   );

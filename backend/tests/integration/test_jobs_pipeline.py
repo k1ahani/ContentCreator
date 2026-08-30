@@ -15,6 +15,7 @@ import pytest
 
 from app.domain.enums import AssetType, JobStatus, JobType
 from app.domain.job import JobCreate
+from app.domain.subtitle import CueCreate, TrackCreate
 from tests.conftest import wait_for_job
 
 
@@ -145,6 +146,150 @@ class TestSubtitleRenderJob:
         done = wait_for_job(container, job.id)
         assert done.status is JobStatus.FAILED
         assert done.error_code == "validation_error"
+
+
+class TestSubtitleSyncJob:
+    """Audio-based synchronisation, end to end and unmocked.
+
+    The test is built the only way this feature can be honestly tested: real
+    speech is synthesised for a known sentence, real speech recognition
+    measures where the words landed in it, and the assertion is that cues
+    which started with deliberately wrong timings ended up on the measured
+    speech. Anything mocked in the middle would prove the code calls a
+    function, not that a subtitle ends up in the right place.
+
+    Marked slow because it needs both the network (for the speech) and the ASR
+    weights on disk, and skips cleanly when either is missing.
+    """
+
+    SENTENCE = "امروز هوا بسیار خوب است و ما به پارک می‌رویم."
+
+    @pytest.mark.slow
+    def test_moves_cues_onto_the_measured_speech(self, container, project):
+        voice_job = container.jobs.submit(JobCreate(
+            type=JobType.TTS_SYNTHESIZE, project_id=project.id,
+            input={
+                "segments": [
+                    {"kind": "pause", "seconds": 3.0},
+                    {"kind": "text", "text": self.SENTENCE},
+                ],
+                "voice_id": "fa-IR-DilaraNeural", "language": "fa",
+            },
+        ))
+        voiced = wait_for_job(container, voice_job.id, timeout=90)
+        if voiced.status is not JobStatus.COMPLETED:
+            pytest.skip(f"could not synthesise test speech: {voiced.error}")
+
+        # A track whose text is correct but whose timing is nonsense - exactly
+        # the raw-subtitle case this feature exists for. The speech does not
+        # start until three seconds in, so a cue at 0.0-1.0 is provably wrong.
+        track = container.subtitles.create_track(project.id, TrackCreate(name="unsynced"))
+        container.subtitles.add_cue(
+            track.id, CueCreate(start=0.0, end=1.0, text=self.SENTENCE)
+        )
+
+        job = container.jobs.submit(JobCreate(
+            type=JobType.SUBTITLE_SYNC, project_id=project.id,
+            input={
+                "track_id": track.id,
+                "asset_id": voiced.output["asset_id"],
+                # The smallest model: this test is about placement, not
+                # transcription quality, and the weights have to be downloaded.
+                "model_size": "tiny",
+                "language": "fa",
+            },
+        ))
+        done = wait_for_job(container, job.id, timeout=600)
+        if done.status is JobStatus.FAILED:
+            pytest.skip(f"speech recognition unavailable: {done.error}")
+
+        assert done.status is JobStatus.COMPLETED, done.error
+        cues = container.subtitles.list_cues(track.id)
+        assert len(cues) == 1
+
+        # The cue must have moved into the speech, which starts after the
+        # three-second silence. This is the whole claim of the feature.
+        assert cues[0].start > 1.5, f"cue did not move out of the silence: {cues[0].start}"
+        assert cues[0].end > cues[0].start
+        assert done.output["timing_source"] in ("audio_aligned", "speech_distributed")
+
+        # And the text is untouched - synchronisation moves cues, never
+        # rewrites them.
+        assert cues[0].text == self.SENTENCE
+
+    @pytest.mark.slow
+    def test_aligns_a_track_built_from_this_video_s_own_transcript(
+        self, container, project
+    ):
+        """The headline case: subtitles that *are* a transcript of this audio.
+
+        Text alignment must actually engage here, not fall back - the words in
+        the cues are the words in the audio.
+
+        This is a regression guard as much as a feature test. Whisper conditions
+        its output on its initial prompt, so when the synchronisation job ran
+        the engine with a different prompt than the transcription job, the same
+        audio came back worded differently and a track made from this
+        platform's own transcript failed to match this platform's own
+        re-listening. The bug was invisible to every unit test - both sides
+        were individually correct - and only appeared when the two real calls
+        were made one after the other.
+        """
+        voice_job = container.jobs.submit(JobCreate(
+            type=JobType.TTS_SYNTHESIZE, project_id=project.id,
+            input={
+                "segments": [
+                    {"kind": "pause", "seconds": 3.0},
+                    {"kind": "text", "text": self.SENTENCE},
+                ],
+                "voice_id": "fa-IR-DilaraNeural", "language": "fa",
+            },
+        ))
+        voiced = wait_for_job(container, voice_job.id, timeout=90)
+        if voiced.status is not JobStatus.COMPLETED:
+            pytest.skip(f"could not synthesise test speech: {voiced.error}")
+
+        transcribe_job = container.jobs.submit(JobCreate(
+            type=JobType.TRANSCRIBE, project_id=project.id,
+            input={
+                "asset_id": voiced.output["asset_id"],
+                "model_size": "tiny", "language": "fa", "refine": False,
+            },
+        ))
+        transcribed = wait_for_job(container, transcribe_job.id, timeout=600)
+        if transcribed.status is not JobStatus.COMPLETED:
+            pytest.skip(f"speech recognition unavailable: {transcribed.error}")
+
+        heard = [s["text"].strip() for s in transcribed.output["segments"] if s["text"].strip()]
+        assert heard, "transcription produced no segments to build cues from"
+
+        # Cue text straight from the transcript, timings deliberately wrong.
+        track = container.subtitles.create_track(project.id, TrackCreate(name="from-transcript"))
+        for index, text in enumerate(heard):
+            container.subtitles.add_cue(
+                track.id, CueCreate(start=index * 0.5, end=index * 0.5 + 0.4, text=text)
+            )
+
+        job = container.jobs.submit(JobCreate(
+            type=JobType.SUBTITLE_SYNC, project_id=project.id,
+            input={
+                "track_id": track.id,
+                "asset_id": voiced.output["asset_id"],
+                "model_size": "tiny", "language": "fa",
+            },
+        ))
+        done = wait_for_job(container, job.id, timeout=600)
+        assert done.status is JobStatus.COMPLETED, done.error
+
+        assert done.output["timing_source"] == "audio_aligned", (
+            "cue text taken from this audio's own transcript must align against "
+            f"it, but the job fell back to {done.output['timing_source']!r} "
+            f"(coverage {done.output['coverage']})"
+        )
+        assert done.output["coverage"] > 0.5
+
+        cues = container.subtitles.list_cues(track.id)
+        assert cues[0].start > 1.5, "aligned cue is still inside the leading silence"
 
 
 class TestTtsJob:

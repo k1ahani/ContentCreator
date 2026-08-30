@@ -28,14 +28,34 @@ from app.tts.base import LogCallback, TTSProvider, TTSProviderInfo
 
 logger = get_logger(__name__)
 
-#: Voices exposed by this provider. The service offers hundreds; these are the
-#: ones for the languages the platform supports. Adding a language means adding
-#: its voices here and a member to :class:`~app.domain.enums.Language`.
+#: Voices exposed by this provider, curated by hand.
+#:
+#: The service offers well over four hundred voices across a hundred-odd
+#: locales; these are every neural voice it has for the two languages the
+#: platform supports (:class:`~app.domain.enums.Language`), which is what "as
+#: many as possible" means here - listing its Japanese voices would only give
+#: the user hundreds of entries they cannot use, since a voice speaking a
+#: language the rest of the pipeline does not model produces gibberish.
+#:
+#: Persian has exactly two neural voices in the service and both are here.
+#: English is deliberately broad *across accents* - en-US, en-GB, en-AU, en-CA,
+#: en-IE, en-IN, en-NZ, en-ZA, en-HK, en-KE, en-NG, en-PH, en-SG, en-TZ -
+#: because the real choice a user makes is which accent narrates the video, and
+#: that choice should be visible rather than implied.
+#:
+#: The list is static rather than fetched from the service on every call: the
+#: voice selector has to render instantly and still work with no network (an
+#: offline machine should see the catalogue with a clear "needs internet" note,
+#: not an empty page), and Microsoft's catalogue for these two languages
+#: changes roughly once a year. Run ``python -m edge_tts --list-voices`` to
+#: check it against the live service.
 _VOICES: tuple[dict, ...] = (
+    # -- Persian ---------------------------------------------------------
     {
         "id": "fa-IR-DilaraNeural",
         "name": "دلارا (زن)",
         "language": Language.PERSIAN,
+        "locale": "fa-IR",
         "gender": VoiceGender.FEMALE,
         "age": VoiceAge.YOUNG,
         "description": "صدای زنانه طبیعی فارسی، مناسب روایت و آموزش.",
@@ -44,41 +64,341 @@ _VOICES: tuple[dict, ...] = (
         "id": "fa-IR-FaridNeural",
         "name": "فرید (مرد)",
         "language": Language.PERSIAN,
+        "locale": "fa-IR",
         "gender": VoiceGender.MALE,
         "age": VoiceAge.ADULT,
         "description": "صدای مردانه طبیعی فارسی، مناسب روایت و پادکست.",
+    },
+    # -- English (United States) -----------------------------------------
+    #
+    # The four "Multilingual" voices are the service's newest generation and
+    # are noticeably more natural than the older US set below them; they are
+    # listed first so the default pick is the best one available.
+    {
+        "id": "en-US-AvaMultilingualNeural",
+        "name": "Ava (female, multilingual)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Expressive American English; the most natural of the US set.",
+    },
+    {
+        "id": "en-US-AndrewMultilingualNeural",
+        "name": "Andrew (male, multilingual)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Warm, confident American English; strong for narration.",
+    },
+    {
+        "id": "en-US-EmmaMultilingualNeural",
+        "name": "Emma (female, multilingual)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.YOUNG,
+        "description": "Light, friendly American English; good for explainers.",
+    },
+    {
+        "id": "en-US-BrianMultilingualNeural",
+        "name": "Brian (male, multilingual)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Relaxed conversational American English.",
     },
     {
         "id": "en-US-AriaNeural",
         "name": "Aria (female)",
         "language": Language.ENGLISH,
+        "locale": "en-US",
         "gender": VoiceGender.FEMALE,
         "age": VoiceAge.ADULT,
         "description": "Natural American English, versatile for narration.",
     },
     {
-        "id": "en-US-GuyNeural",
-        "name": "Guy (male)",
-        "language": Language.ENGLISH,
-        "gender": VoiceGender.MALE,
-        "age": VoiceAge.ADULT,
-        "description": "Natural American English, warm and conversational.",
-    },
-    {
         "id": "en-US-JennyNeural",
         "name": "Jenny (female)",
         "language": Language.ENGLISH,
+        "locale": "en-US",
         "gender": VoiceGender.FEMALE,
         "age": VoiceAge.YOUNG,
         "description": "Friendly American English, good for casual delivery.",
     },
     {
+        "id": "en-US-GuyNeural",
+        "name": "Guy (male)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Natural American English, warm and conversational.",
+    },
+    {
+        "id": "en-US-ChristopherNeural",
+        "name": "Christopher (male)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.MATURE,
+        "description": "Deeper American English; authoritative documentary tone.",
+    },
+    {
+        "id": "en-US-EricNeural",
+        "name": "Eric (male)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Even, measured American English for long-form reading.",
+    },
+    {
+        "id": "en-US-RogerNeural",
+        "name": "Roger (male)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.MATURE,
+        "description": "Mature American English with a news-reader cadence.",
+    },
+    {
+        "id": "en-US-SteffanNeural",
+        "name": "Steffan (male)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Clear American English suited to instructional content.",
+    },
+    {
+        "id": "en-US-MichelleNeural",
+        "name": "Michelle (female)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Calm American English; pleasant over a long narration.",
+    },
+    {
+        "id": "en-US-AnaNeural",
+        "name": "Ana (female, child)",
+        "language": Language.ENGLISH,
+        "locale": "en-US",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.YOUNG,
+        "description": "Child-like American English, for playful content.",
+    },
+    # -- English (United Kingdom) ----------------------------------------
+    {
+        "id": "en-GB-SoniaNeural",
+        "name": "Sonia (female, British)",
+        "language": Language.ENGLISH,
+        "locale": "en-GB",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "British English, crisp and professional.",
+    },
+    {
         "id": "en-GB-RyanNeural",
         "name": "Ryan (male, British)",
         "language": Language.ENGLISH,
+        "locale": "en-GB",
         "gender": VoiceGender.MALE,
         "age": VoiceAge.ADULT,
         "description": "British English, measured and professional.",
+    },
+    {
+        "id": "en-GB-LibbyNeural",
+        "name": "Libby (female, British)",
+        "language": Language.ENGLISH,
+        "locale": "en-GB",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.YOUNG,
+        "description": "Younger British English; bright and approachable.",
+    },
+    {
+        "id": "en-GB-ThomasNeural",
+        "name": "Thomas (male, British)",
+        "language": Language.ENGLISH,
+        "locale": "en-GB",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "British English with a softer, documentary delivery.",
+    },
+    {
+        "id": "en-GB-MaisieNeural",
+        "name": "Maisie (female, British child)",
+        "language": Language.ENGLISH,
+        "locale": "en-GB",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.YOUNG,
+        "description": "Child-like British English.",
+    },
+    # -- English (rest of the world) -------------------------------------
+    {
+        "id": "en-AU-NatashaNeural",
+        "name": "Natasha (female, Australian)",
+        "language": Language.ENGLISH,
+        "locale": "en-AU",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Australian English, relaxed and clear.",
+    },
+    {
+        "id": "en-AU-WilliamNeural",
+        "name": "William (male, Australian)",
+        "language": Language.ENGLISH,
+        "locale": "en-AU",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Australian English, steady narration voice.",
+    },
+    {
+        "id": "en-CA-ClaraNeural",
+        "name": "Clara (female, Canadian)",
+        "language": Language.ENGLISH,
+        "locale": "en-CA",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Canadian English, neutral and friendly.",
+    },
+    {
+        "id": "en-CA-LiamNeural",
+        "name": "Liam (male, Canadian)",
+        "language": Language.ENGLISH,
+        "locale": "en-CA",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Canadian English, easy conversational tone.",
+    },
+    {
+        "id": "en-IE-EmilyNeural",
+        "name": "Emily (female, Irish)",
+        "language": Language.ENGLISH,
+        "locale": "en-IE",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Irish English, warm and lyrical.",
+    },
+    {
+        "id": "en-IE-ConnorNeural",
+        "name": "Connor (male, Irish)",
+        "language": Language.ENGLISH,
+        "locale": "en-IE",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Irish English, casual and personable.",
+    },
+    {
+        "id": "en-IN-NeerjaNeural",
+        "name": "Neerja (female, Indian)",
+        "language": Language.ENGLISH,
+        "locale": "en-IN",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Indian English, clear and articulate.",
+    },
+    {
+        "id": "en-IN-PrabhatNeural",
+        "name": "Prabhat (male, Indian)",
+        "language": Language.ENGLISH,
+        "locale": "en-IN",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "Indian English, steady and professional.",
+    },
+    {
+        "id": "en-NZ-MollyNeural",
+        "name": "Molly (female, New Zealand)",
+        "language": Language.ENGLISH,
+        "locale": "en-NZ",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "New Zealand English, bright and natural.",
+    },
+    {
+        "id": "en-NZ-MitchellNeural",
+        "name": "Mitchell (male, New Zealand)",
+        "language": Language.ENGLISH,
+        "locale": "en-NZ",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "New Zealand English, unhurried narration.",
+    },
+    {
+        "id": "en-ZA-LeahNeural",
+        "name": "Leah (female, South African)",
+        "language": Language.ENGLISH,
+        "locale": "en-ZA",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "South African English, calm and precise.",
+    },
+    {
+        "id": "en-ZA-LukeNeural",
+        "name": "Luke (male, South African)",
+        "language": Language.ENGLISH,
+        "locale": "en-ZA",
+        "gender": VoiceGender.MALE,
+        "age": VoiceAge.ADULT,
+        "description": "South African English, grounded delivery.",
+    },
+    {
+        "id": "en-HK-YanNeural",
+        "name": "Yan (female, Hong Kong)",
+        "language": Language.ENGLISH,
+        "locale": "en-HK",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Hong Kong English, neutral and clear.",
+    },
+    {
+        "id": "en-KE-AsiliaNeural",
+        "name": "Asilia (female, Kenyan)",
+        "language": Language.ENGLISH,
+        "locale": "en-KE",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Kenyan English, warm and even.",
+    },
+    {
+        "id": "en-NG-EzinneNeural",
+        "name": "Ezinne (female, Nigerian)",
+        "language": Language.ENGLISH,
+        "locale": "en-NG",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Nigerian English, expressive and clear.",
+    },
+    {
+        "id": "en-PH-RosaNeural",
+        "name": "Rosa (female, Filipino)",
+        "language": Language.ENGLISH,
+        "locale": "en-PH",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Philippine English, friendly and light.",
+    },
+    {
+        "id": "en-SG-LunaNeural",
+        "name": "Luna (female, Singaporean)",
+        "language": Language.ENGLISH,
+        "locale": "en-SG",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Singapore English, crisp and neutral.",
+    },
+    {
+        "id": "en-TZ-ImaniNeural",
+        "name": "Imani (female, Tanzanian)",
+        "language": Language.ENGLISH,
+        "locale": "en-TZ",
+        "gender": VoiceGender.FEMALE,
+        "age": VoiceAge.ADULT,
+        "description": "Tanzanian English, measured and calm.",
     },
 )
 
@@ -124,6 +444,7 @@ class EdgeTtsProvider(TTSProvider):
             supports_styles=True,
             supported_languages=[Language.PERSIAN, Language.ENGLISH],
             voice_count=len(_VOICES),
+            pricing="free",
         )
         try:
             import edge_tts  # noqa: F401, PLC0415
@@ -146,6 +467,7 @@ class EdgeTtsProvider(TTSProvider):
                 provider=self.id,
                 name=voice["name"],
                 language=voice["language"],
+                locale=voice["locale"],
                 gender=voice["gender"],
                 age=voice["age"],
                 styles=list(_STYLES),

@@ -93,6 +93,113 @@ what the user asked for — silently re-merging a sentence-mode cue or a
 one-word `custom` cue back together would defeat the whole point of choosing
 that mode.
 
+## Synchronisation: fixing a track whose text is already right
+
+`app/media/subtitles/sync.py`. Segmentation decides *what text goes in a cue*;
+this module decides *when an existing cue appears*. It exists for the case the
+generation path cannot serve: a subtitle file that arrived with the video (or
+was pasted in as a document) whose words are correct and whose timings are
+`estimated` — distributed by character count across the whole file, drifting
+further from the speech with every minute.
+
+There are deliberately **two** methods, because they answer different questions
+and the user knows which one they need before the platform does.
+
+### 1. Automatic, from the video's audio
+
+`JobType.SUBTITLE_SYNC` (`app/jobs/handlers/subtitle_sync.py`),
+`POST /api/projects/{id}/subtitles/sync`. Re-extracts the audio into `temp/`
+(WAV, deleted afterwards — the source video is never touched), runs the same
+speech-recognition layer transcription uses, and moves the existing cues onto
+the measured word timings. Two placement strategies, and which one ran is
+always reported in `timing_source`:
+
+- **`audio_aligned`** — cue text matched against the ASR word stream with
+  `difflib.SequenceMatcher`. Matched cues take the *real measured times* of the
+  words they matched; unmatched cues are interpolated between their matched
+  neighbours by character count. Tolerates mis-heard, dropped and inserted
+  words, which a positional zip could not — that would desynchronise
+  permanently at the engine's first mistake.
+- **`speech_distributed`** — the fallback when coverage falls below
+  `MIN_ALIGNMENT_COVERAGE` (0.35). Cue text is distributed across the *measured
+  speech regions* rather than the file's whole duration, so silence, music and
+  gaps between speakers no longer consume subtitle time. Still approximate, and
+  reported as such. This is what a translated track gets, since its words can
+  never match the audio.
+
+**Both sides of a comparison must decode identically.** The sync handler seeds
+Whisper with the same `DEFAULT_PERSIAN_SEED_PROMPT` the transcribe handler uses.
+This is not tidiness: Whisper conditions its output on its initial prompt, so
+running it with a different prompt returns *differently worded* text for
+identical audio — and a track built from this platform's own transcript then
+fails to match this platform's own re-listening, falling back to distribution
+for no reason but an inconsistency between two of our own calls. This was a real
+bug, invisible to unit tests (both calls were individually correct) and caught
+only by running the two in sequence against real audio.
+
+### 2. Manual / batch, from arithmetic
+
+`POST /api/projects/{id}/subtitles/{track_id}/retime`. Answers **inline, not as
+a job** — it reads no media and runs no external tool, so a progress bar would
+be theatre. Four modes (`SubtitleRetimeMode`), each applying to every cue at
+once so the user never drags fifty cues by hand:
+
+| Mode | What it does | When |
+| --- | --- | --- |
+| `shift` | Adds a signed offset to every cue. | "Everything is 2s late." |
+| `reading_speed` | Recomputes each cue's duration from *its own* text length at a target characters-per-second, then repacks the track end to end. | "Subtitles flick past too fast." |
+| `scale` | Multiplies every timing around an anchor (the first cue's start). | Drift that grows through the file — a 25 vs 23.976 fps mismatch. |
+| `stretch` | Scales so the last cue ends at a given time. | "Make the subtitles finish when the video does." |
+
+`shift` clamps at zero rather than going negative, which means a large negative
+shift *shortens* a cue already pressed against the start of the video instead of
+moving it. Every other cue keeps its duration and spacing; this matches what
+desktop subtitle editors do, and is documented on `_shift` because it surprises
+people.
+
+### The hygiene pass, and why every path ends in it
+
+`sync.py::sanitize` runs after **every** retime mode and after **both**
+placement strategies. It is not tidiness — each rule exists because of a
+specific way a burned-in render goes wrong:
+
+- **Overlaps** → libass draws every cue covering the current frame, so two
+  overlapping cues are two stacked subtitle boxes. A naive "shift everything"
+  produces one the moment two cues cross.
+- **Sub-frame durations** → a cue whose end lands on or before its start
+  violates the `end_seconds > start_seconds` CHECK on `subtitle_cues` and the
+  write fails outright, so `min_duration` is a correctness floor, not taste.
+- **Runaway durations** → a cue held for a minute reads as a frozen frame.
+- **Overrunning the media** → clamped inside `media_duration` when it is known.
+
+Where the media ceiling and cue ordering genuinely conflict (more cues than the
+video has room for), **ordering wins**: a cue past the end of the video is
+simply not drawn, while two cues stacked on one instant is a visible defect.
+
+A `RetimeReport` accompanies every result — cues changed, overlaps fixed,
+durations adjusted, cues clamped, largest shift — so the UI can state what
+happened rather than saying "done".
+
+### One more hygiene pass, at render time
+
+`sync.py::prepare_for_render`, called from the render handler, catches the two
+problems that only become visible once subtitles are actually burned in:
+
+- **Blank cues are dropped.** An empty cue still emits a `Dialogue` line, and
+  with the default style (`background_opacity > 0` → ASS `BorderStyle=3`, an
+  opaque box) that line draws an **empty coloured box** over the picture for its
+  whole duration.
+- **Overlaps are resolved**, with a one-centisecond minimum gap — the resolution
+  of an ASS timecode. A smaller gap rounds two cues onto the same boundary in
+  the written script and libass stacks them again, re-creating at the last step
+  the artefact that was resolved everywhere upstream.
+
+Its rules are deliberately far looser than the retiming rules: a twenty-second
+title card is intent, not a mistake, and a render must never silently re-time
+what the user placed by hand in the timeline editor. The sidecar `.srt` written
+alongside a render uses the same corrected cues, so the burned-in subtitles and
+the exported file can never disagree about timing.
+
 ## Styling: one model drives two renderers
 
 `app/domain/subtitle.py::SubtitleStyle` is the single source of truth for
@@ -140,7 +247,7 @@ correctly, but they are not equivalent:
 ## The timeline editor (frontend)
 
 `frontend/src/pages/project/SubtitleEditorPage.tsx` plus
-`frontend/src/components/subtitle/{SubtitleTimeline,CueDetailPanel,StylePanel,VideoPreview}.tsx`.
+`frontend/src/components/subtitle/{SubtitleTimeline,CueDetailPanel,StylePanel,VideoPreview,SyncPanel}.tsx`.
 
 - **Optimistic local state, debounced writes.** Cue edits update local state
   immediately (so dragging and typing feel instant) and are persisted per-cue
@@ -154,6 +261,11 @@ correctly, but they are not equivalent:
   regardless of the page's RTL direction — time conventionally increases
   left-to-right on a scrubber regardless of UI language, and mixing that with
   RTL layout would make dragging feel backwards.
+- **Synchronisation cancels pending writes.** Both sync paths write straight to
+  the database, so the page's in-flight debounced per-cue writes are cleared
+  before the new cues are adopted (`onCuesChanged` in `SubtitleEditorPage.tsx`).
+  Without that, a write still inside its 400ms window would land afterwards and
+  snap a just-synchronised cue back to its old time.
 - **Click-to-seek and click-to-select** share one handler
   (`handleTrackClick`), distinguishing "clicked empty timeline" (seek the
   video, deselect) from "clicked a cue block" (`data-cue-block` guard) so
@@ -180,6 +292,14 @@ buttons pick it up automatically once it's in the enum.
 - **Assuming generation always has real timings.** Check `timing_source` in
   the generation job's output before treating a track's timing as
   authoritative.
+- **Writing cue timings without sanitising them.** Every path that sets timings
+  goes through `sync.py::sanitize` (or `prepare_for_render` at render time). An
+  unsanitised write is what produces stacked subtitles and failed inserts.
+- **Rewriting cue text during synchronisation.** Synchronisation moves cues; it
+  never changes a character of what they say. `SubtitleRepository.retime_cues`
+  updates only `start_seconds`/`end_seconds` — deliberately not `replace_cues`,
+  which would discard cue ids (breaking the editor's selection) and any per-cue
+  style overrides.
 
 ## Testing
 
@@ -187,6 +307,18 @@ buttons pick it up automatically once it's in the enum.
 colour/alignment math, format serialisation (including the brace-escaping
 and BOM behaviour), and segmentation (word-boundary splitting, overlap
 prevention, reading-speed enforcement) without touching FFmpeg.
+`backend/tests/unit/test_subtitle_sync.py` covers re-timing: all four batch
+modes, word alignment (mis-heard words, interpolation of unmatched cues,
+Persian orthographic folding, and refusing to align a translated track), speech
+distribution, and the render hygiene pass. Its `assert_renderable` helper
+states the no-overlap/positive-duration invariants once, and every mode is
+checked against it.
+
 `backend/tests/integration/test_jobs_pipeline.py::TestSubtitleGenerationJob`
 and `TestSubtitleRenderJob` exercise the full job pipeline, including the
-`estimated` vs `asr_segments` timing-source distinction.
+`estimated` vs `asr_segments` timing-source distinction. `TestSubtitleSyncJob`
+synthesises real speech, runs real speech recognition over it, and asserts that
+cues with deliberately wrong timings land on the measured audio — nothing
+mocked in between. Its second test builds the cues from the video's *own*
+transcript and requires `timing_source == "audio_aligned"`, which is the
+regression guard for the initial-prompt consistency described above.

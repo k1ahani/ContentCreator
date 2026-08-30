@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 
 from app.domain.asset import MediaAsset, MediaProbe
 from app.domain.job import Job
+from app.domain.subtitle import RetimeReport, SubtitleCue
 
 T = TypeVar("T")
 
@@ -22,6 +23,20 @@ class ListResponse(BaseModel, Generic[T]):
 
     items: list[T]
     total: int
+
+
+class RetimeResponse(BaseModel):
+    """The retimed cues plus what the operation actually changed.
+
+    A plain ``ListResponse`` would leave the UI unable to say anything more
+    useful than "done": the report is what lets it tell the user that eleven
+    cues moved, three overlaps were resolved and nothing ran past the end of
+    the video - facts the user needs to decide whether to keep the result.
+    """
+
+    items: list[SubtitleCue]
+    total: int
+    report: RetimeReport
 
 
 class JobAcceptedResponse(BaseModel):

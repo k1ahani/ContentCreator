@@ -32,6 +32,32 @@ structural, at the data model level:
   committing" flow) to get the AI's result back without creating a document
   row at all — useful for a quick look that the user might reject outright.
 
+## The AI is optional, not required
+
+The editor page works end to end with every AI provider unreachable, which
+matters because those providers are CLIs talking to remote services: on a
+network that blocks them, a page that *required* the AI would be entirely
+unusable when the only part that actually needed the network was one optional
+step in the middle.
+
+What makes that true rather than aspirational:
+
+- **The result box is a real `<textarea>`, not a read-only panel**
+  (`frontend/src/pages/project/TextEditPage.tsx`). The user can paste a
+  translation produced elsewhere, correct what the model got wrong, or type the
+  whole thing by hand, and then Apply it exactly as if the AI had produced it.
+  A clipboard button is offered as a shortcut, and it degrades to "use Ctrl+V"
+  when the browser refuses clipboard permission — the workflow does not depend
+  on the shortcut.
+- **"ذخیره به‌عنوان سند" saves whatever is in that box** as a new
+  `TextDocument` with `source_document_id` set, continuing the source's version
+  chain. This is what makes a hand-written translation a first-class version the
+  rest of the pipeline (subtitles, speech) can consume, rather than text
+  stranded in a textarea.
+
+The core guarantee above is unaffected: a manually saved result still *creates*
+a document rather than overwriting one.
+
 ## One handler, several tasks
 
 `text_task.py` serves editing, translation, analysis, summarisation and
@@ -75,6 +101,27 @@ saved-prompt categories, a prompt history, and reusable variable-driven
 templates can be added later **without a migration** — the schema was
 designed ahead of the UI that will eventually expose them (see requirement
 16's explicit ask for this forward-compatibility).
+
+### The persisted "custom" instruction
+
+Alongside the built-in prompt chips for a task (proofreading, readability, tone
+adjustment) the editor offers a **دستور دلخواه** chip, available in every mode
+rather than only in the standalone custom mode. Selecting it swaps the built-in
+body for the user's own instruction, which is saved and restored automatically —
+including in a project they have never opened before.
+
+**Why that lives in `ai.custom_prompt` (a setting) and not in the `prompts`
+table.** The two are for different things, and the distinction is worth keeping:
+the table holds *named templates the user curates*, a library with many entries.
+This is a single "what I was last doing" value that follows the user across
+projects and is pre-filled on arrival — one global slot, always overwritten,
+never listed. Storing it as a prompt row would put an unnamed, ever-changing
+entry into a library meant for deliberate, named ones.
+
+It is written on blur and again before each run, and read back into an *empty*
+box only, so restoring a saved prompt can never clobber something the user is
+mid-way through typing. The write is fire-and-forget: a convenience that fails
+to save must not block the request the user actually asked for.
 
 ## Output cleanup
 

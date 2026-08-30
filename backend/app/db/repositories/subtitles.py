@@ -184,6 +184,37 @@ class SubtitleRepository(BaseRepository):
             )
         return self.list_cues(track_id)
 
+    def retime_cues(
+        self, track_id: str, timings: dict[str, tuple[float, float]]
+    ) -> list[SubtitleCue]:
+        """Rewrite the timings of existing cues, atomically, in one pass.
+
+        The counterpart to :meth:`replace_cues` for synchronisation: batch
+        re-timing changes *when* every cue appears but must not touch what it
+        says. Going through ``replace_cues`` would delete and recreate the
+        rows, discarding cue ids (breaking the editor's current selection) and
+        any per-cue style overrides the user had set - so this updates in
+        place instead. One transaction, because a half-applied sync leaves the
+        track with some cues on the old timeline and some on the new one.
+        """
+        if not timings:
+            return self.list_cues(track_id)
+
+        with self.db.transaction() as conn:
+            conn.executemany(
+                "UPDATE subtitle_cues SET start_seconds = ?, end_seconds = ?"
+                " WHERE id = ? AND track_id = ?",
+                [
+                    (start, end, cue_id, track_id)
+                    for cue_id, (start, end) in timings.items()
+                ],
+            )
+            conn.execute(
+                "UPDATE subtitle_tracks SET updated_at = ? WHERE id = ?",
+                (utcnow(), track_id),
+            )
+        return self.list_cues(track_id)
+
     def update_cue(self, cue_id: str, data: CueUpdate) -> SubtitleCue | None:
         fields: list[str] = []
         params: list[object] = []

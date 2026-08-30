@@ -18,6 +18,7 @@ import { assetsApi, jobsApi, subtitlesApi } from "@/lib/api/resources";
 import { assetDownloadUrl } from "@/lib/api/client";
 import { VideoPreview } from "@/components/subtitle/VideoPreview";
 import { SubtitleTimeline } from "@/components/subtitle/SubtitleTimeline";
+import { SyncPanel } from "@/components/subtitle/SyncPanel";
 import { CueDetailPanel } from "@/components/subtitle/CueDetailPanel";
 import { StylePanel } from "@/components/subtitle/StylePanel";
 import { CliConsole } from "@/components/console/CliConsole";
@@ -38,6 +39,12 @@ export function SubtitleEditorPage() {
   const { data: videos } = useQuery({
     queryKey: ["assets", projectId, "video"],
     queryFn: () => assetsApi.list(projectId, "video"),
+  });
+  // Audio assets are offered to the synchroniser as well: a project that has
+  // already extracted its audio can be analysed without re-extracting it.
+  const { data: audios } = useQuery({
+    queryKey: ["assets", projectId, "audio"],
+    queryFn: () => assetsApi.list(projectId, "audio"),
   });
 
   const [cues, setCues] = useState<SubtitleCue[]>([]);
@@ -229,6 +236,25 @@ export function SubtitleEditorPage() {
               />
             </CardBody>
           </Card>
+
+          <SyncPanel
+            projectId={projectId}
+            trackId={trackId!}
+            cues={sortedCues}
+            mediaAssets={[...(videos?.items ?? []), ...(audios?.items ?? [])]}
+            mediaDuration={duration}
+            onCuesChanged={(next) => {
+              // Both synchronisation paths write straight to the database, so
+              // the debounced per-cue writes still in flight from a previous
+              // edit would overwrite them on landing. Cancelling them first is
+              // what stops a just-synchronised cue from snapping back to its
+              // old time a fraction of a second later.
+              pendingWrites.current.forEach((timer) => clearTimeout(timer));
+              pendingWrites.current.clear();
+              setCues(next);
+              queryClient.invalidateQueries({ queryKey: ["subtitleTrack", projectId, trackId] });
+            }}
+          />
 
           <Card>
             <CardHeader

@@ -5,6 +5,80 @@ and which docs were updated alongside it. Keep this current — it's the
 fastest way for a future agent to see what's actually shipped versus what the
 original requirements document merely asked for.
 
+## 1.3.0 — Subtitle synchronisation, voice providers + previews, manual text workflow (2026-08-30)
+
+### Subtitle synchronisation (two methods, as required)
+
+- **Automatic, from the video's audio.** New `JobType.SUBTITLE_SYNC`
+  (`app/jobs/handlers/subtitle_sync.py`, `POST .../subtitles/sync`): re-extracts
+  the audio to `temp/`, runs the existing speech-recognition layer, and moves
+  the *existing* cues onto the measured word timings. Cue text is never
+  touched. Alignment matches cue text to the ASR word stream with
+  `difflib.SequenceMatcher` (`timing_source: audio_aligned`) and falls back to
+  distributing cues over the measured speech regions when the text does not
+  match — a translated track, say (`speech_distributed`). Both are reported
+  honestly rather than presented as equally good.
+- **Manual/batch.** `POST .../subtitles/{track}/retime` with four modes:
+  `shift`, `reading_speed` (the "subtitle display speed" control — each cue's
+  duration derived from its own text length at a target characters-per-second),
+  `scale` and `stretch`. Applies to every cue as a group. Answers inline rather
+  than as a job: it reads no media, so a progress bar would be theatre.
+- **Render artefacts.** Every timing write now ends in
+  `sync.py::sanitize`, and the render handler additionally runs
+  `prepare_for_render`, which drops blank cues (with the default opaque-box
+  style they render as an empty black bar over the picture) and separates
+  overlapping cues with at least the one-centisecond resolution of an ASS
+  timecode (libass draws every cue covering a frame, so overlaps stack). The
+  sidecar `.srt` uses the same corrected cues, so it can never disagree with
+  the burned-in video.
+- **Bug found by real verification.** The sync job originally ran Whisper
+  without the Persian seed prompt the transcribe handler uses. Whisper
+  conditions its output on that prompt, so the same audio came back worded
+  differently and a track built from the platform's own transcript failed to
+  match the platform's own re-listening — silently degrading every such sync to
+  the fallback path. Both calls were individually correct, so no unit test could
+  see it; only running the two in sequence against real audio did. Guarded by
+  `TestSubtitleSyncJob::test_aligns_a_track_built_from_this_video_s_own_transcript`.
+- Migration `0002_subtitle_sync_job.sql` widens the `jobs.type` CHECK. It
+  rebuilds both `jobs` and `job_logs` in a specific order, because dropping
+  `jobs` with foreign keys on would cascade and erase the console-log history.
+
+### Speech: two more providers, many more voices, audible previews
+
+- **38 Microsoft neural voices** (was 6): both Persian voices plus English
+  across fourteen locales. `VoiceSpec.locale` carries the BCP-47 tag, because
+  with this many English voices the accent *is* the choice being made and
+  `Language` cannot express it.
+- **ElevenLabs** (`freemium`, API key) and **any OpenAI-compatible endpoint**
+  (`app/tts/providers/openai_compatible.py`). The latter is written against the
+  protocol rather than a vendor, so the same code path drives OpenAI's paid
+  endpoint and a free self-hosted server — point `voice.openai_base_url` at
+  `http://localhost:8880/v1` and synthesis is free and fully offline.
+- **Voice previews**: `GET /api/ai/tts/voices/{id}/preview` plays a hosted
+  sample when the provider publishes one (free, spends no quota) and otherwise
+  synthesises one short sentence, cached on disk per voice and sample text. The
+  new `VoicePicker` component gives every voice a play button.
+- `TTSProviderInfo` gained `pricing`, `requires_api_key` and `api_key_setting`
+  so the UI distinguishes "not set up yet" from "broken", and the settings page
+  lists live provider status next to the credential fields.
+- `ServiceContainer.invalidate` now *rebuilds* the TTS registry on a `voice.*`
+  change instead of clearing its availability cache — a credential is baked in
+  at construction, so the cache clear alone left the old key in use.
+
+### Text editing without the AI
+
+- The AI Result box is a real textarea: paste, edit, or write a translation by
+  hand and Apply or save it exactly as if the model had produced it, so the page
+  stays usable on a network where the AI CLIs are blocked. "ذخیره به‌عنوان سند"
+  turns it into a new `TextDocument` continuing the source's version chain.
+- A **دستور دلخواه** chip sits alongside the built-in prompts in every mode. The
+  instruction persists in `ai.custom_prompt` and is pre-filled in future
+  projects — a setting rather than a `prompts` row because it is one global
+  "what I was last doing" value, not a named template in a curated library.
+
+Docs updated: `SUBTITLE_SYSTEM.md`, `TTS_SYSTEM.md`, `TEXT_PROCESSING.md`,
+`API.md`, `DATABASE.md`, `JOB_SYSTEM.md`, `SETTINGS.md`.
+
 ## 1.2.0 — Subtitle segmentation modes + editor layout fix (2026-08-29)
 
 - `SubtitleEditorPage.tsx`: fixed the video preview overflowing the page and

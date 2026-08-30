@@ -24,12 +24,15 @@ import type {
   ProjectStatus,
   PromptInfo,
   ProviderInfo,
+  RetimeResponse,
   SettingsPayload,
   SpeakingStyle,
   SubtitleCue,
   SubtitleFormat,
+  SubtitleRetimeMode,
   SubtitleSegmentationMode,
   SubtitleStyle,
+  SubtitleSyncStrategy,
   SubtitleTrack,
   SystemStatus,
   TaskInfo,
@@ -141,6 +144,27 @@ export const jobsApi = {
     },
   ) => api.post<JobAcceptedResponse>(`/projects/${projectId}/subtitles/generate`, data),
 
+  /**
+   * Automatic synchronisation: re-extract the video's audio, measure where the
+   * words actually are, and move the existing cues onto those measurements.
+   * Cue text is never altered. The manual counterpart is
+   * `subtitlesApi.retime`, which needs no job because it reads no media.
+   */
+  syncSubtitles: (
+    projectId: string,
+    data: {
+      track_id: string;
+      asset_id: string;
+      language?: Language;
+      engine?: string;
+      model_size?: string;
+      strategy?: SubtitleSyncStrategy;
+      min_duration?: number;
+      max_duration?: number;
+      gap?: number;
+    },
+  ) => api.post<JobAcceptedResponse>(`/projects/${projectId}/subtitles/sync`, data),
+
   renderSubtitles: (
     projectId: string,
     data: { track_id: string; asset_id: string; quality?: string; export_subtitle?: boolean },
@@ -207,6 +231,29 @@ export const subtitlesApi = {
   mergeCue: (projectId: string, trackId: string, cueId: string) =>
     api.post<ListResponse<SubtitleCue>>(`/projects/${projectId}/subtitles/${trackId}/cues/${cueId}/merge`, {}),
 
+  /**
+   * Manual/batch synchronisation - move every cue at once. Answers inline
+   * with the updated cues *and* a report of what changed, so the UI can say
+   * what happened rather than just "done".
+   */
+  retime: (
+    projectId: string,
+    trackId: string,
+    data: {
+      mode: SubtitleRetimeMode;
+      offset_seconds?: number;
+      factor?: number;
+      anchor_seconds?: number;
+      chars_per_second?: number;
+      start_seconds?: number;
+      target_end_seconds?: number;
+      min_duration?: number;
+      max_duration?: number;
+      gap?: number;
+      media_duration_seconds?: number;
+    },
+  ) => api.post<RetimeResponse>(`/projects/${projectId}/subtitles/${trackId}/retime`, data),
+
   previewUrl: (projectId: string, trackId: string, format: SubtitleFormat) =>
     `/api/projects/${projectId}/subtitles/${trackId}/preview?format=${format}`,
   export: (projectId: string, trackId: string, format: SubtitleFormat) =>
@@ -229,6 +276,18 @@ export const aiApi = {
     api.get<ListResponse<TTSProviderInfo>>("/ai/tts/providers", { refresh }),
   voices: (params?: { provider?: string; language?: Language }) =>
     api.get<ListResponse<VoiceSpec>>("/ai/tts/voices", params),
+  /**
+   * URL of a short spoken sample of one voice, for an `<audio>` element.
+   *
+   * Not a `fetch` wrapper on purpose: the browser's own audio element should
+   * stream it and honour the endpoint's cache headers, which it cannot do
+   * from a blob we downloaded ourselves. Voice ids can contain a colon (the
+   * API-backed providers compose them), so the id is encoded.
+   */
+  voicePreviewUrl: (voiceId: string, text?: string) => {
+    const query = text ? `?text=${encodeURIComponent(text)}` : "";
+    return `/api/ai/tts/voices/${encodeURIComponent(voiceId)}/preview${query}`;
+  },
 };
 
 // -- system / settings ---------------------------------------------------

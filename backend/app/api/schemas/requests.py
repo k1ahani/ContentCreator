@@ -20,6 +20,7 @@ from app.domain.enums import (
     ProjectStatus,
     SpeakingStyle,
     SubtitleFormat,
+    SubtitleRetimeMode,
     SubtitleSegmentationMode,
 )
 from app.domain.subtitle import SubtitleStyle
@@ -133,6 +134,54 @@ class GenerateSubtitleRequest(BaseModel):
     segmentation_mode: SubtitleSegmentationMode | None = None
     #: Exact words per cue, used only when segmentation_mode is CUSTOM.
     words_per_cue: int | None = Field(default=None, ge=1, le=20)
+
+
+class SyncSubtitleRequest(BaseModel):
+    """Re-time an existing track against a media asset's audio.
+
+    Unlike :class:`GenerateSubtitleRequest` this never creates or replaces cue
+    *text* - it only moves the cues that are already there, which is why it
+    takes a ``track_id`` rather than a document.
+    """
+
+    track_id: str
+    #: Video or audio asset to listen to. A video is re-extracted first.
+    asset_id: str
+    language: Language | None = None
+    #: Speech-recognition engine and model, defaulting to the user's settings.
+    engine: str | None = None
+    model_size: str | None = None
+    #: ``auto`` aligns cue text to the measured words and falls back to speech
+    #: distribution when they do not match; ``align`` refuses to fall back;
+    #: ``distribute`` skips matching entirely (the right choice for a
+    #: translated track, whose words will never match the audio).
+    strategy: Literal["auto", "align", "distribute"] = "auto"
+    min_duration: float | None = Field(default=None, gt=0.0, le=10.0)
+    max_duration: float | None = Field(default=None, gt=0.0, le=60.0)
+    gap: float | None = Field(default=None, ge=0.0, le=2.0)
+
+
+class RetimeSubtitleRequest(BaseModel):
+    """One manual batch retiming operation over every cue in a track.
+
+    The manual counterpart to :class:`SyncSubtitleRequest`: no media is read,
+    so it runs inline instead of as a job. Which fields matter depends on
+    ``mode`` - see :class:`~app.domain.enums.SubtitleRetimeMode`.
+    """
+
+    mode: SubtitleRetimeMode = SubtitleRetimeMode.SHIFT
+    offset_seconds: float = Field(default=0.0, ge=-7200.0, le=7200.0)
+    factor: float = Field(default=1.0, gt=0.05, le=20.0)
+    anchor_seconds: float = Field(default=0.0, ge=0.0)
+    chars_per_second: float = Field(default=15.0, gt=1.0, le=60.0)
+    start_seconds: float | None = Field(default=None, ge=0.0)
+    target_end_seconds: float | None = Field(default=None, gt=0.0)
+    min_duration: float | None = Field(default=None, gt=0.0, le=10.0)
+    max_duration: float | None = Field(default=None, gt=0.0, le=60.0)
+    gap: float | None = Field(default=None, ge=0.0, le=2.0)
+    #: Longest the track may run, normally the video's duration. Cues are
+    #: clamped inside it so a retime cannot push subtitles past the end.
+    media_duration_seconds: float | None = Field(default=None, ge=0.0)
 
 
 class RenderSubtitleRequest(BaseModel):

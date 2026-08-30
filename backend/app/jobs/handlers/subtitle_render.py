@@ -15,6 +15,7 @@ from app.domain.enums import AssetType, JobType
 from app.jobs.context import JobContext
 from app.jobs.registry import register_handler
 from app.media.subtitles.formats import write_subtitle_file
+from app.media.subtitles.sync import prepare_for_render
 from app.media.video import RENDER_QUALITIES, render_subtitles
 
 logger = get_logger(__name__)
@@ -60,13 +61,32 @@ def handle_subtitle_render(ctx: JobContext) -> dict:
     ctx.system(f"subtitle: {len(track.cues)} cues, style={track.style.font_family} {track.style.font_size}px")
     ctx.system(f"quality: {quality.id if quality else quality_id}")
 
+    # Last line of defence against the two failure modes that only become
+    # visible once the subtitles are actually burned in - stacked overlapping
+    # cues, and empty cues drawing an empty background box over the picture.
+    # See app/media/subtitles/sync.py::prepare_for_render.
+    cues, adjustments, dropped_blank = prepare_for_render(track.cues)
+    if dropped_blank:
+        ctx.system(f"skipped {dropped_blank} empty cue(s): they would render as blank boxes")
+    if adjustments.overlaps_fixed or adjustments.durations_adjusted:
+        ctx.system(
+            f"timing corrected before render: {adjustments.overlaps_fixed} overlap(s), "
+            f"{adjustments.durations_adjusted} out-of-range duration(s)"
+        )
+    if not cues:
+        raise ValidationError(
+            f"track {track_id!r} has no cue with any text",
+            user_message="هیچ‌کدام از قطعه‌های این زیرنویس متنی ندارند.",
+            hint="متن قطعه‌ها را وارد کنید و دوباره رندر بگیرید.",
+        )
+
     tools = ctx.services.ffmpeg()
     ctx.set_progress(0.02, "در حال رندر ویدیو")
 
     result = render_subtitles(
         tools,
         source=Path(video_asset.path),
-        cues=track.cues,
+        cues=cues,
         style=track.style,
         output_dir=ctx.project_dir("rendered"),
         temp_dir=ctx.project_dir("temp"),
@@ -90,7 +110,7 @@ def handle_subtitle_render(ctx: JobContext) -> dict:
             "source_asset_id": asset_id,
             "track_id": track_id,
             "quality": result.quality,
-            "cue_count": len(track.cues),
+            "cue_count": len(cues),
         },
     )
 
@@ -99,9 +119,11 @@ def handle_subtitle_render(ctx: JobContext) -> dict:
     subtitle_asset_id: str | None = None
     if bool(ctx.input.get("export_subtitle", True)):
         fmt = str(settings.get("subtitle.export_format") or "srt")
+        # The same corrected cues, so the sidecar file and the burned-in
+        # subtitles can never disagree about timing.
         subtitle_path = write_subtitle_file(
             ctx.project_dir("subtitles") / f"{result.output_path.stem}.{fmt}",
-            track.cues,
+            cues,
             track.style,
         )
         subtitle_asset = ctx.services.assets.create(
@@ -111,7 +133,7 @@ def handle_subtitle_render(ctx: JobContext) -> dict:
             original_filename=subtitle_path.name,
             size_bytes=subtitle_path.stat().st_size,
             format=fmt,
-            metadata={"track_id": track_id, "cue_count": len(track.cues)},
+            metadata={"track_id": track_id, "cue_count": len(cues)},
         )
         subtitle_asset_id = subtitle_asset.id
         ctx.system(f"exported {subtitle_path.name}")
@@ -134,5 +156,7 @@ def handle_subtitle_render(ctx: JobContext) -> dict:
         "duration_display": format_clock(result.duration_seconds),
         "processing_seconds": round(result.processing_seconds, 2),
         "quality": result.quality,
-        "cue_count": len(track.cues),
+        "cue_count": len(cues),
+        "skipped_empty_cues": dropped_blank,
+        "overlaps_fixed": adjustments.overlaps_fixed,
     }

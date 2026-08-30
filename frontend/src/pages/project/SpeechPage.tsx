@@ -3,8 +3,13 @@
  *
  * Every voice, language and provider comes from `/api/ai/tts/*` - nothing is
  * hardcoded (same principle as the model registry: see docs/AI_SYSTEM.md).
- * Two real providers are wired up on the backend (Edge neural, offline
- * SAPI5); this page just renders whichever the registry reports.
+ * Four providers are wired up on the backend - Microsoft neural voices,
+ * offline SAPI5, ElevenLabs, and any OpenAI-compatible endpoint (hosted or
+ * self-hosted) - and this page renders whichever the registry reports, with
+ * whatever voices each one offers. Adding a fifth changes nothing here.
+ *
+ * Voices are chosen in `VoicePicker`, which can play a real sample of each
+ * one; a list this long is not usefully chosen from by reading names.
  */
 
 import { useState } from "react";
@@ -15,6 +20,7 @@ import { useJobRunner } from "@/hooks/useJobRunner";
 import { aiApi, documentsApi, jobsApi } from "@/lib/api/resources";
 import { assetUrl } from "@/lib/api/client";
 import { SpeechSegmentEditor, type EditorSegment } from "@/components/tts/SpeechSegmentEditor";
+import { VoicePicker } from "@/components/tts/VoicePicker";
 import { CliConsole } from "@/components/console/CliConsole";
 import { Card, CardHeader, CardBody, Button, Select, Field, ProgressBar, Badge, toast } from "@/components/ui";
 import type { Language, SpeakingStyle } from "@/lib/api/types";
@@ -169,17 +175,23 @@ export function SpeechPage() {
               </div>
             </Field>
 
-            <Field label="صدا">
-              <Select value={effectiveVoiceId} onChange={(e) => setVoiceId(e.target.value)}>
-                {voices?.items.length === 0 && <option value="">صدایی در دسترس نیست</option>}
-                {voices?.items.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.name} · {v.gender === "female" ? "زن" : v.gender === "male" ? "مرد" : ""}
-                  </option>
-                ))}
-              </Select>
+            <Field label="صدای انتخاب‌شده">
+              <div className="rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm dark:border-slate-800">
+                {selectedVoice ? (
+                  <span className="text-slate-900 dark:text-slate-100">{selectedVoice.name}</span>
+                ) : (
+                  <span className="text-slate-400">صدایی در دسترس نیست</span>
+                )}
+              </div>
             </Field>
           </div>
+
+          <VoicePicker
+            voices={voices?.items ?? []}
+            providers={providers?.items ?? []}
+            selectedVoiceId={effectiveVoiceId}
+            onSelect={setVoiceId}
+          />
 
           {selectedVoice && selectedVoice.styles.length > 1 && (
             <Field label="سبک گفتار">

@@ -1,16 +1,35 @@
 """Text-to-speech provider registry.
 
-Same contract as the AI and transcription registries. Version 1 registers two
-providers, which is what keeps the abstraction honest: the neural provider for
-quality and real Persian, the SAPI5 provider for fully offline operation.
+Same contract as the AI and transcription registries. Four providers ship, and
+they were chosen to span the whole space rather than to pad the list - each one
+is the only member of its category:
 
-Add a provider by importing it and appending it in :meth:`TTSRegistry.build`.
+===================  ========  ========  ===========================================
+Provider             Cost      Network   Why it is here
+===================  ========  ========  ===========================================
+``edge``             free      required  Real neural Persian; the quality default.
+``sapi5``            free      none      Works with no internet at all.
+``elevenlabs``       freemium  required  Best-in-class English, hosted samples.
+``openai_compatible``varies    varies    Any OpenAI-shaped endpoint, hosted or local.
+===================  ========  ========  ===========================================
+
+Add a provider by implementing :class:`~app.tts.base.TTSProvider` and appending
+it in :meth:`TTSRegistry.build` - one line. Everything downstream (the voice
+endpoint, the provider selector, the preview endpoint, the synthesis job) reads
+the registry and names no provider, so nothing else has to change.
+
+**Why ``build`` takes settings.** Two of the four providers need a credential
+or an endpoint before they can do anything, and settings are user-editable at
+runtime. The registry is therefore rebuilt - not merely re-probed - when a
+``voice.*`` setting changes (``ServiceContainer.invalidate``), so pasting an
+API key takes effect immediately rather than at the next restart.
 """
 
 from __future__ import annotations
 
 import threading
 import time
+from typing import Any
 
 from app.core.errors import ProviderNotFoundError
 from app.core.logging import get_logger
@@ -18,6 +37,8 @@ from app.domain.enums import Language
 from app.domain.tts import VoiceSpec
 from app.tts.base import TTSProvider, TTSProviderInfo
 from app.tts.providers.edge import EdgeTtsProvider
+from app.tts.providers.elevenlabs import ElevenLabsProvider
+from app.tts.providers.openai_compatible import OpenAICompatibleProvider
 from app.tts.providers.sapi5 import Sapi5Provider
 
 logger = get_logger(__name__)
@@ -36,10 +57,38 @@ class TTSRegistry:
             self.register(provider)
 
     @classmethod
-    def build(cls) -> "TTSRegistry":
-        # Order matters: the neural provider is listed first because it is the
-        # one that actually speaks Persian.
-        return cls([EdgeTtsProvider(), Sapi5Provider()])
+    def build(cls, settings: Any = None) -> "TTSRegistry":
+        """Construct every provider, configured from user settings.
+
+        ``settings`` is optional so a test (or any caller that only wants the
+        credential-free providers) can build a registry with no database
+        behind it; the API-backed providers then simply report themselves as
+        not configured, which is the same state a fresh install is in.
+        """
+
+        def value(key: str, fallback: str = "") -> str:
+            if settings is None:
+                return fallback
+            return str(settings.get(key) or fallback)
+
+        # Order matters: it decides the default provider (see default_id) and
+        # the order voices appear in. The neural provider is first because it
+        # is the one that actually speaks Persian well and costs nothing.
+        return cls(
+            [
+                EdgeTtsProvider(),
+                Sapi5Provider(),
+                ElevenLabsProvider(
+                    api_key=value("voice.elevenlabs_api_key"),
+                    model=value("voice.elevenlabs_model"),
+                ),
+                OpenAICompatibleProvider(
+                    api_key=value("voice.openai_api_key"),
+                    base_url=value("voice.openai_base_url"),
+                    model=value("voice.openai_model"),
+                ),
+            ]
+        )
 
     def register(self, provider: TTSProvider) -> None:
         if not provider.id:
