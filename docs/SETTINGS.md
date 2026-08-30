@@ -42,11 +42,11 @@ Settings page renders as tabs (`frontend/src/pages/SettingsPage.tsx`,
 | Section | Covers |
 |---|---|
 | `general` | workspace directory, import size limit, allowed import roots, theme |
-| `ai` | active provider (Claude/Codex), each provider's CLI path, default model, per-task model preferences, timeout |
+| `ai` | active provider (Claude/Codex), each provider's CLI path, default model, per-task model preferences, timeout, the persisted custom prompt |
 | `transcription` | engine, model size, language, VAD filter, auto-refine |
 | `media` | FFmpeg path, default audio preset, default render quality |
 | `subtitle` | style (font/color/position/etc.), segmentation limits, export format |
-| `voice` | provider, language, default voice, style, rate, pitch, output format |
+| `voice` | provider, language, default voice, style, rate, pitch, output format, API credentials and endpoint for the API-backed providers, per-language preview sentence |
 
 ### The AI provider picker
 
@@ -107,8 +107,12 @@ changed keys:
   (so a new Claude or Codex CLI path, a provider switch, or a new timeout
   takes effect on the very next AI call — no restart needed);
 - any `media.*` key clears the FFmpeg locator cache;
-- `transcription.*` / `voice.*` invalidate the corresponding provider
-  registry's availability cache.
+- `transcription.*` invalidates that registry's availability cache;
+- `voice.*` **drops and rebuilds the whole TTS registry**, not just its
+  availability cache. An API key or base URL is baked into a provider instance
+  when it is constructed (`TTSRegistry.build` reads settings), so clearing the
+  cache alone would keep using the old credential until the next restart -
+  exactly the confusing bug this section warns about.
 
 This is intentionally generous — these objects are cheap to rebuild, and
 being stingy about invalidation produces the much more confusing bug of a UI

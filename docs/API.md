@@ -63,9 +63,17 @@ POST /api/projects/{id}/audio/extract           Feature 1
 POST /api/projects/{id}/transcribe               Feature 2
 POST /api/projects/{id}/text/process              Features 3 & 4
 POST /api/projects/{id}/subtitles/generate         Feature 5 (build cues)
+POST /api/projects/{id}/subtitles/sync             Feature 5 (re-time from audio)
 POST /api/projects/{id}/subtitles/render           Feature 5 (burn in)
 POST /api/projects/{id}/speech/synthesize           Feature 6
 ```
+
+Note the one deliberate asymmetry: subtitle synchronisation has **two**
+endpoints, and only the automatic one is a job. `.../subtitles/sync` runs
+speech recognition and therefore takes minutes; `.../subtitles/{track}/retime`
+below is pure arithmetic over rows and answers inline. Making the second one a
+job too would be consistency for its own sake — a progress bar for something
+already finished. See `docs/SUBTITLE_SYSTEM.md`.
 
 **Jobs**
 ```
@@ -85,9 +93,14 @@ GET/POST                     /api/projects/{id}/subtitles/{track_id}/cues
 PATCH/DELETE                 /api/projects/{id}/subtitles/{track_id}/cues/{cue_id}
 POST .../cues/{cue_id}/split  split at a timeline position
 POST .../cues/{cue_id}/merge  merge with the following cue
+POST .../retime               batch re-time every cue (shift/scale/reading_speed/stretch)
 GET  .../preview?format=srt|vtt|ass
 POST .../export               write + register as an asset
 ```
+
+`retime` returns `{items, total, report}` rather than a bare `ListResponse`:
+the report (cues changed, overlaps fixed, cues clamped, largest shift) is what
+lets the UI say what actually happened instead of "done".
 
 **AI discovery** (see `docs/AI_SYSTEM.md`, `docs/AI_MODELS.md`)
 ```
@@ -97,9 +110,14 @@ GET /api/ai/recommend?task=&provider= recommended model + Persian reason
 GET /api/ai/tasks                     AITaskType list with Persian labels
 GET /api/ai/prompts?task=              built-in + saved prompt templates
 GET /api/ai/transcription/engines      ASR engine status + model sizes
-GET /api/ai/tts/providers              TTS provider status
+GET /api/ai/tts/providers              TTS provider status (availability, pricing, key needed)
 GET /api/ai/tts/voices?provider=&language=
+GET /api/ai/tts/voices/{voice_id}/preview?text=   short spoken sample (audio/mpeg)
 ```
+
+The preview route declares `voice_id` as a `:path` parameter because the
+API-backed providers compose ids containing a colon; it returns audio bytes, not
+JSON, and is cached on disk per voice and sample text.
 
 **System & settings**
 ```

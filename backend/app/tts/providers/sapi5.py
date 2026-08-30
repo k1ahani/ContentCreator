@@ -201,6 +201,7 @@ class Sapi5Provider(TTSProvider):
                     provider=self.id,
                     name=f"{entry.get('Name')} ({culture})",
                     language=language,
+                    locale=culture,
                     gender=_map_gender(str(entry.get("Gender") or "")),
                     age=_map_age(str(entry.get("Age") or "")),
                     styles=[SpeakingStyle.NEUTRAL],

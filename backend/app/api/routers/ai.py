@@ -9,18 +9,21 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Response
 
 from app.ai.prompts.library import list_builtins
 from app.ai.tasks import all_profiles, get_profile
 from app.api.deps import Container
 from app.api.schemas.responses import ListResponse, PromptInfo, TaskInfo
+from app.core.errors import NotFoundError, ValidationError
 from app.core.logging import get_logger
+from app.core.paths import PATHS
 from app.domain.ai import ModelRecommendation, ModelSpec, ProviderInfo
 from app.domain.enums import AITaskType, Language
 from app.domain.tts import VoiceSpec
 from app.transcription.base import TranscriptionProviderInfo
 from app.tts.base import TTSProviderInfo
+from app.tts.preview import build_voice_preview
 
 logger = get_logger(__name__)
 
@@ -178,3 +181,59 @@ def list_voices(
     """Voices from every available provider, optionally filtered."""
     voices = container.tts.list_voices(provider_id=provider, language=language)
     return ListResponse(items=voices, total=len(voices))
+
+
+@router.get(
+    "/tts/voices/{voice_id:path}/preview",
+    responses={200: {"content": {"audio/mpeg": {}}, "description": "A short spoken sample"}},
+)
+def preview_voice(
+    voice_id: str,
+    container: Container,
+    text: Annotated[str | None, Query(max_length=300)] = None,
+) -> Response:
+    """A short audio sample of one voice, so it can be auditioned before use.
+
+    Choosing between forty voices by reading their descriptions is guesswork;
+    this is what makes the choice actual listening. Two sources, in order:
+
+    1. **A sample the provider already hosts** (``VoiceSpec.preview_url``).
+       Free, instant, and spends none of the user's paid quota - which is why
+       it is preferred whenever a provider publishes one.
+    2. **A real synthesis of one short sentence**, for every provider that
+       does not. The result is cached on disk keyed by voice and text, so
+       clicking the same voice twice costs one synthesis, not two.
+
+    ``voice_id`` is declared as a path parameter so ids containing a slash or
+    colon (the API-backed providers compose ids - see
+    ``app/tts/providers/elevenlabs.py``) survive routing intact.
+    """
+    voice = container.tts.find_voice(voice_id)
+    if voice is None:
+        raise NotFoundError(
+            f"no provider offers voice {voice_id!r}",
+            user_message="صدای انتخاب‌شده در دسترس نیست.",
+            hint="صدای دیگری از فهرست انتخاب کنید.",
+        )
+
+    settings = container.settings
+    sample_text = (text or "").strip() or str(
+        settings.get(f"voice.preview_text_{voice.language.value}") or ""
+    ).strip()
+    if not sample_text:
+        raise ValidationError(
+            f"no preview text configured for language {voice.language.value!r}",
+            user_message="متنی برای نمونه صدا تنظیم نشده است.",
+            hint="متن نمونه را از «تنظیمات ← صدا» وارد کنید.",
+        )
+
+    audio, media_type = build_voice_preview(
+        container.tts, voice, sample_text, cache_dir=PATHS.storage / ".tts-temp" / "previews"
+    )
+    return Response(
+        content=audio,
+        media_type=media_type,
+        # The sample for a given voice and text never changes, and the voice
+        # selector re-requests it every time the user clicks play.
+        headers={"Cache-Control": "private, max-age=86400"},
+    )

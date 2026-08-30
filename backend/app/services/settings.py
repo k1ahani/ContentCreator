@@ -52,6 +52,11 @@ DEFAULTS: dict[str, Any] = {
     "ai.model_by_task": {},
     "ai.timeout_seconds": 900,
     "ai.default_language": Language.PERSIAN.value,
+    #: The last custom instruction the user wrote in the text editor. Stored
+    #: as a setting rather than a prompts-table row because it is a single
+    #: "what I was last doing" value that follows the user across projects,
+    #: not a named template they manage - see docs/TEXT_PROCESSING.md.
+    "ai.custom_prompt": "",
     # -- transcription ---------------------------------------------------
     "transcription.engine": "faster_whisper",
     "transcription.model_size": "medium",
@@ -78,6 +83,24 @@ DEFAULTS: dict[str, Any] = {
     "voice.rate": 1.0,
     "voice.pitch": 0.0,
     "voice.output_format": "mp3",
+    #: Credentials for the API-backed speech providers. Empty means "not
+    #: configured", which those providers report as a setup step rather than a
+    #: failure - see app/tts/providers/elevenlabs.py. Changing any voice.*
+    #: key rebuilds the TTS registry (ServiceContainer.invalidate), so a key
+    #: pasted here works immediately without a restart.
+    "voice.elevenlabs_api_key": "",
+    "voice.elevenlabs_model": "eleven_multilingual_v2",
+    "voice.openai_api_key": "",
+    #: Point this at a local OpenAI-compatible speech server (for example
+    #: http://localhost:8880/v1) to get free, fully offline synthesis through
+    #: the same provider - see app/tts/providers/openai_compatible.py.
+    "voice.openai_base_url": "https://api.openai.com/v1",
+    "voice.openai_model": "gpt-4o-mini-tts",
+    #: Sentence spoken by the voice-preview endpoint, per language. Kept as a
+    #: setting rather than a constant so a user comparing voices for one
+    #: specific project can audition them on that project's own wording.
+    "voice.preview_text_fa": "سلام، این یک نمونه از صدای من است.",
+    "voice.preview_text_en": "Hello, this is a sample of how I sound.",
 }
 
 #: Keys whose values are paths that must exist when non-empty.

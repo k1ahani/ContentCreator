@@ -50,13 +50,15 @@ ContentCreatorApp/
 │   │   │   ├── base.py               TTSProvider interface
 │   │   │   ├── registry.py
 │   │   │   ├── assembler.py          text + pauses -> one audio file
-│   │   │   └── providers/edge.py, sapi5.py
+│   │   │   ├── preview.py            cached voice samples for auditioning
+│   │   │   ├── http.py               stdlib HTTP + Persian error translation
+│   │   │   └── providers/edge.py, sapi5.py, elevenlabs.py, openai_compatible.py
 │   │   │
 │   │   ├── media/                    FFmpeg integration
 │   │   │   ├── ffmpeg/                locator.py, runner.py (progress), probe.py
 │   │   │   ├── audio.py               Feature 1: video -> speech-optimised audio
 │   │   │   ├── video.py               Feature 5: subtitle burn-in rendering
-│   │   │   └── subtitles/             formats.py (SRT/VTT/ASS), style.py, segmentation.py
+│   │   │   └── subtitles/             formats.py (SRT/VTT/ASS), style.py, segmentation.py, sync.py
 │   │   │
 │   │   ├── jobs/                     background job system (see docs/JOB_SYSTEM.md)
 │   │   │   ├── queue.py               worker pool, job lifecycle

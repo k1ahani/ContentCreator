@@ -72,6 +72,7 @@ def load_handlers() -> None:
         audio_extract,
         subtitle_generate,
         subtitle_render,
+        subtitle_sync,
         text_task,
         transcribe,
         tts_synthesize,

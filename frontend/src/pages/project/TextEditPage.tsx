@@ -6,18 +6,33 @@
  * AI produced) are two separate pieces of state; "Apply" copies the result
  * into the editable original, "Reject" just discards it. Either way nothing
  * is written back to the source document until the user acts.
+ *
+ * **The AI is optional here, not required.** The result box is a real
+ * textarea, not a read-only panel: the user can paste a translation they
+ * produced elsewhere, fix what the model got wrong, or type the whole thing
+ * by hand, and then apply or save it exactly as if the AI had produced it.
+ * That matters because the AI providers are CLIs talking to remote services -
+ * on a network where those are blocked, a read-only result box would make the
+ * entire page useless, when the only part that actually needed the network
+ * was one optional step in the middle.
+ *
+ * "ذخیره به‌عنوان سند" is what makes the manual path complete: it turns
+ * whatever is in the result box into a new `TextDocument` that continues the
+ * source document's version chain, so a hand-made translation is a first-class
+ * version of the text rather than something stranded in a textarea.
  */
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeftRight, Check, X, Copy, Sparkles, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeftRight, Check, X, Copy, Sparkles, ClipboardPaste, Save } from "lucide-react";
 import { useProject } from "@/hooks/useProject";
 import { useJobRunner } from "@/hooks/useJobRunner";
-import { aiApi, documentsApi, jobsApi } from "@/lib/api/resources";
+import { aiApi, documentsApi, jobsApi, settingsApi } from "@/lib/api/resources";
 import { ModelSelector } from "@/components/ai/ModelSelector";
 import { CliConsole } from "@/components/console/CliConsole";
 import { Card, CardHeader, CardBody, Button, Textarea, Select, Field, toast } from "@/components/ui";
-import type { AITaskType, Language } from "@/lib/api/types";
+import { ApiError } from "@/lib/api/client";
+import type { AITaskType, DocumentType, Language } from "@/lib/api/types";
 
 type Mode = "editing" | "translation" | "custom";
 
@@ -26,6 +41,33 @@ const MODE_TASK: Record<Mode, AITaskType> = {
   translation: "translation",
   custom: "general",
 };
+
+/** Where a saved result lands in the document list, per mode. */
+const MODE_DOCUMENT_TYPE: Record<Mode, DocumentType> = {
+  editing: "edited",
+  translation: "translation",
+  custom: "edited",
+};
+
+/**
+ * Setting holding the user's last custom instruction.
+ *
+ * A setting rather than a saved-prompt row because of what the requirement
+ * actually asks for: one instruction that follows the user into their *next*
+ * project and is pre-filled there. That is a single global "what I was last
+ * doing" value, not a named template in a library the user curates - the
+ * prompts table already exists for the latter.
+ */
+const CUSTOM_PROMPT_SETTING = "ai.custom_prompt";
+
+/**
+ * Pseudo-id for the "custom instruction" chip that sits alongside the
+ * built-in prompts (proofreading, tone adjustment, ...). Selecting it swaps
+ * the built-in body for the user's own persisted instruction, so a custom
+ * prompt is available in every mode rather than only in the standalone
+ * custom mode.
+ */
+const CUSTOM_PROMPT_ID = "__custom__";
 
 export function TextEditPage() {
   const { projectId } = useProject();
@@ -44,6 +86,8 @@ export function TextEditPage() {
   // description, the backend always used index 0 regardless of what the
   // user clicked. Selecting one now actually sends that prompt's body.
   const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
+  const [savingDocument, setSavingDocument] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: documents } = useQuery({
     queryKey: ["documents", projectId],
@@ -53,7 +97,45 @@ export function TextEditPage() {
     queryKey: ["prompts", MODE_TASK[mode]],
     queryFn: () => aiApi.prompts(MODE_TASK[mode]),
   });
-  const selectedPrompt = prompts?.items.find((p) => p.id === selectedPromptId) ?? null;
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => settingsApi.get(),
+  });
+
+  const sourceDocument = documents?.items.find((d) => d.id === sourceDocId) ?? null;
+  const usingCustomPrompt = mode === "custom" || selectedPromptId === CUSTOM_PROMPT_ID;
+  const selectedPrompt =
+    selectedPromptId === CUSTOM_PROMPT_ID
+      ? null
+      : prompts?.items.find((p) => p.id === selectedPromptId) ?? null;
+
+  // Pre-fill the custom instruction with whatever the user last saved -
+  // including in a project they have never opened before, which is the point
+  // of storing it as a setting. Only fills an empty box, so it can never
+  // clobber something the user is in the middle of typing.
+  useEffect(() => {
+    const stored = settings?.values?.[CUSTOM_PROMPT_SETTING];
+    if (typeof stored === "string" && stored.trim()) {
+      setCustomPrompt((current) => (current.trim() ? current : stored));
+    }
+  }, [settings]);
+
+  /**
+   * Persist the custom instruction so the next project starts from it.
+   *
+   * Fire-and-forget: this is a convenience, and a failed write must never
+   * block the user's actual request from being sent.
+   */
+  const rememberCustomPrompt = (prompt: string) => {
+    const trimmed = prompt.trim();
+    if (!trimmed || trimmed === settings?.values?.[CUSTOM_PROMPT_SETTING]) return;
+    settingsApi
+      .update({ [CUSTOM_PROMPT_SETTING]: trimmed })
+      .then(() => queryClient.invalidateQueries({ queryKey: ["settings"] }))
+      .catch(() => {
+        /* a prompt that failed to save is not worth interrupting the run */
+      });
+  };
 
   const runner = useJobRunner((job) => {
     const text = (job.output as { result?: string }).result ?? "";
@@ -74,12 +156,18 @@ export function TextEditPage() {
       toast.error("متنی برای پردازش وجود ندارد");
       return;
     }
+    if (usingCustomPrompt && !customPrompt.trim()) {
+      toast.error("دستور دلخواه را بنویسید");
+      return;
+    }
+    if (usingCustomPrompt) rememberCustomPrompt(customPrompt);
+
     setResult(null);
     runner.run(() =>
       jobsApi.processText(projectId, {
         task: MODE_TASK[mode],
         content,
-        prompt: mode === "custom" ? customPrompt : selectedPrompt?.body,
+        prompt: usingCustomPrompt ? customPrompt : selectedPrompt?.body,
         source_language: mode === "translation" ? sourceLang : undefined,
         target_language: mode === "translation" ? targetLang : undefined,
         model: model ?? undefined,
@@ -89,13 +177,62 @@ export function TextEditPage() {
   };
 
   const applyResult = () => {
-    if (!result) return;
+    if (!result?.trim()) return;
     setContent(result);
     setResult(null);
     toast.success("نتیجه اعمال شد");
   };
 
   const rejectResult = () => setResult(null);
+
+  /** Paste the clipboard into the result box - the manual translation path. */
+  const pasteIntoResult = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text.trim()) {
+        toast.error("کلیپ‌بورد خالی است");
+        return;
+      }
+      setResult(text);
+    } catch {
+      // Clipboard read needs a permission the browser may refuse. The
+      // textarea still accepts a normal Ctrl+V, so this is a shortcut
+      // failing, not the workflow failing - say exactly that.
+      toast.error("دسترسی به کلیپ‌بورد ممکن نشد؛ داخل کادر نتیجه از Ctrl+V استفاده کنید");
+    }
+  };
+
+  /**
+   * Save whatever is in the result box as a new document version.
+   *
+   * Deliberately independent of whether the AI produced that text: this is
+   * the step that lets a hand-written or pasted translation become a real
+   * version in the document chain, so the rest of the pipeline (subtitles,
+   * speech) can consume it like any other.
+   */
+  const saveResultAsDocument = async () => {
+    if (!result?.trim()) return;
+    setSavingDocument(true);
+    try {
+      const created = await documentsApi.create(projectId, {
+        type: MODE_DOCUMENT_TYPE[mode],
+        title: sourceDocument
+          ? `${sourceDocument.title || sourceDocument.type} - ویرایش دستی`
+          : "متن ویرایش‌شده",
+        content: result,
+        language: mode === "translation" ? targetLang : sourceDocument?.language,
+        // Continuing the source's chain is what makes the version number in
+        // the document list mean something - see docs/TEXT_PROCESSING.md.
+        source_document_id: sourceDocId || undefined,
+      });
+      queryClient.invalidateQueries({ queryKey: ["documents", projectId] });
+      toast.success(`ذخیره شد (نسخه ${created.version})`);
+    } catch (error) {
+      toast.error(error instanceof ApiError ? error.message : "ذخیره سند ناموفق بود");
+    } finally {
+      setSavingDocument(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -159,11 +296,16 @@ export function TextEditPage() {
         </div>
       )}
 
-      {mode === "custom" && (
-        <Field label="دستور شما به هوش مصنوعی" required>
+      {usingCustomPrompt && (
+        <Field
+          label="دستور شما به هوش مصنوعی"
+          required
+          hint="این دستور ذخیره می‌شود و دفعه بعد - حتی در پروژه‌ای دیگر - همین‌جا آماده است."
+        >
           <Textarea
             value={customPrompt}
             onChange={(e) => setCustomPrompt(e.target.value)}
+            onBlur={() => rememberCustomPrompt(customPrompt)}
             rows={3}
             placeholder="مثلاً: این متن را از نظر نگارشی اصلاح کن. معنی متن را تغییر نده."
           />
@@ -173,7 +315,16 @@ export function TextEditPage() {
       {mode !== "custom" && prompts && prompts.items.length > 0 && (
         <div>
           <div className="flex flex-wrap gap-1.5">
-            {prompts.items.map((p) => {
+            {/*
+              The built-in templates for this task (proofreading, tone
+              adjustment, ...) plus one more chip for the user's own saved
+              instruction, so a custom prompt is reachable from every mode
+              rather than only from the standalone custom mode.
+            */}
+            {[
+              ...prompts.items,
+              { id: CUSTOM_PROMPT_ID, name_fa: "دستور دلخواه", description_fa: "دستور ذخیره‌شده خودتان" },
+            ].map((p) => {
               const active = selectedPromptId === p.id;
               return (
                 <button
@@ -214,36 +365,65 @@ export function TextEditPage() {
 
         <Card>
           <CardHeader
-            title="نتیجه هوش مصنوعی"
+            title="نتیجه"
+            description="خروجی هوش مصنوعی - یا متنی که خودتان اینجا می‌نویسید یا جای‌گذاری می‌کنید"
             action={
-              result && (
-                <div className="flex gap-1.5">
-                  <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText(result)}>
-                    <Copy size={14} />
-                  </Button>
-                  <Button size="sm" variant="danger" onClick={rejectResult}>
-                    <X size={14} />
-                    رد کردن
-                  </Button>
-                  <Button size="sm" onClick={applyResult}>
-                    <Check size={14} />
-                    اعمال
-                  </Button>
-                </div>
-              )
+              <div className="flex gap-1.5">
+                <Button size="sm" variant="ghost" onClick={pasteIntoResult} title="جای‌گذاری از کلیپ‌بورد">
+                  <ClipboardPaste size={14} />
+                </Button>
+                {result?.trim() && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => navigator.clipboard.writeText(result)}
+                      title="کپی"
+                    >
+                      <Copy size={14} />
+                    </Button>
+                    <Button size="sm" variant="danger" onClick={rejectResult}>
+                      <X size={14} />
+                      پاک کردن
+                    </Button>
+                    <Button size="sm" onClick={applyResult}>
+                      <Check size={14} />
+                      اعمال
+                    </Button>
+                  </>
+                )}
+              </div>
             }
           />
-          <CardBody>
-            {result ? (
-              <div className="max-h-[19rem] overflow-y-auto whitespace-pre-wrap rounded-xl bg-slate-50 p-3.5 text-sm leading-relaxed text-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
-                {result}
-              </div>
-            ) : (
-              <div className="flex h-[19rem] flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 text-center text-sm text-slate-400 dark:border-slate-800">
-                <FileText size={28} className="text-slate-300 dark:text-slate-700" />
-                نتیجه پس از اجرا اینجا نمایش داده می‌شود
-              </div>
-            )}
+          <CardBody className="space-y-3">
+            {/*
+              A textarea, not a read-only panel. This is what lets the whole
+              page work with no AI at all: paste a translation produced
+              elsewhere, correct what the model got wrong, or write it by
+              hand - then apply or save it exactly as if it had come from the
+              AI. See the file header.
+            */}
+            <Textarea
+              value={result ?? ""}
+              onChange={(e) => setResult(e.target.value)}
+              rows={12}
+              placeholder="نتیجه هوش مصنوعی اینجا نمایش داده می‌شود - یا متن ترجمه/ویرایش‌شده خود را مستقیماً اینجا بنویسید یا جای‌گذاری کنید..."
+            />
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={saveResultAsDocument}
+                loading={savingDocument}
+                disabled={!result?.trim() || savingDocument}
+              >
+                <Save size={14} />
+                ذخیره به‌عنوان سند
+              </Button>
+              <span className="text-xs text-slate-400">
+                نسخه جدیدی از متن می‌سازد که در بقیه بخش‌ها (زیرنویس و گفتار) قابل استفاده است
+              </span>
+            </div>
           </CardBody>
         </Card>
       </div>

@@ -19,6 +19,7 @@ from app.api.schemas.requests import (
     ExtractAudioRequest,
     GenerateSubtitleRequest,
     RenderSubtitleRequest,
+    SyncSubtitleRequest,
     SynthesizeSpeechRequest,
     TextTaskRequest,
     TranscribeRequest,
@@ -116,6 +117,28 @@ def generate_subtitles(
         container,
         JobCreate(
             type=JobType.SUBTITLE_GENERATE,
+            project_id=project_id,
+            input=body.model_dump(exclude_none=True),
+        ),
+    )
+
+
+@router.post(
+    "/projects/{project_id}/subtitles/sync",
+    response_model=JobAcceptedResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Feature 5: re-time an existing track against the video's audio",
+)
+def sync_subtitles(
+    project_id: str, body: SyncSubtitleRequest, container: Container
+) -> JobAcceptedResponse:
+    """Automatic synchronisation. The manual counterpart is
+    ``POST /api/projects/{id}/subtitles/{track_id}/retime``, which is pure
+    arithmetic and therefore answers inline instead of as a job."""
+    return _accept(
+        container,
+        JobCreate(
+            type=JobType.SUBTITLE_SYNC,
             project_id=project_id,
             input=body.model_dump(exclude_none=True),
         ),

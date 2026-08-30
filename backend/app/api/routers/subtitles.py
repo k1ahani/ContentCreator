@@ -18,22 +18,26 @@ from app.api.schemas.requests import (
     CreateTrackRequest,
     ExportSubtitleRequest,
     MergeCuesRequest,
+    RetimeSubtitleRequest,
     SplitCueRequest,
     UpdateCueRequest,
     UpdateTrackRequest,
 )
-from app.api.schemas.responses import ListResponse, OperationResponse
+from app.api.schemas.responses import ListResponse, OperationResponse, RetimeResponse
 from app.core.errors import NotFoundError, ValidationError
 from app.core.logging import get_logger
-from app.domain.enums import AssetType, SubtitleFormat
+from app.domain.enums import AssetType, SubtitleFormat, SubtitleRetimeMode
 from app.domain.subtitle import (
     CueCreate,
     CueUpdate,
+    RetimeOptions,
     SubtitleCue,
     SubtitleTrack,
+    TimingRules,
     TrackCreate,
 )
 from app.media.subtitles.formats import to_ass, to_srt, to_vtt, write_subtitle_file
+from app.media.subtitles.sync import TimedText, retime
 
 logger = get_logger(__name__)
 
@@ -279,6 +283,77 @@ def merge_cue(
 
     cues = container.subtitles.list_cues(track_id)
     return ListResponse(items=cues, total=len(cues))
+
+
+# --------------------------------------------------------------------------
+# Batch re-timing
+# --------------------------------------------------------------------------
+
+
+@router.post("/{track_id}/retime", response_model=RetimeResponse)
+def retime_track(
+    project: CurrentProject,
+    track_id: str,
+    body: RetimeSubtitleRequest,
+    container: Container,
+) -> RetimeResponse:
+    """Move every cue in a track at once - the manual synchronisation path.
+
+    Answers inline rather than returning a job because it reads no media and
+    touches no external tool: it is arithmetic over rows the request already
+    implies, and making the user watch a progress bar for it would be theatre.
+    The audio-based counterpart *does* need a job, and lives at
+    ``POST /api/projects/{id}/subtitles/sync``.
+
+    Cue text is never touched. The whole result goes through
+    ``app/media/subtitles/sync.py::sanitize`` before it is written, so no
+    retime can leave the track overlapping, sub-frame or running past the
+    media - the three ways a retimed track renders badly.
+    """
+    track = _require_track(container, project.id, track_id)
+    if not track.cues:
+        raise ValidationError(
+            "track has no cues to retime",
+            user_message="این زیرنویس هیچ قطعه‌ای ندارد.",
+        )
+    if body.mode is SubtitleRetimeMode.STRETCH and not body.target_end_seconds:
+        raise ValidationError(
+            "stretch mode needs a target end time",
+            user_message="برای حالت کشیدن، زمان پایان دلخواه را مشخص کنید.",
+        )
+
+    defaults = TimingRules()
+    options = RetimeOptions(
+        mode=body.mode,
+        offset_seconds=body.offset_seconds,
+        factor=body.factor,
+        anchor_seconds=body.anchor_seconds,
+        chars_per_second=body.chars_per_second,
+        start_seconds=body.start_seconds,
+        target_end_seconds=body.target_end_seconds,
+        rules=TimingRules(
+            min_duration=body.min_duration or defaults.min_duration,
+            max_duration=body.max_duration or defaults.max_duration,
+            gap=defaults.gap if body.gap is None else body.gap,
+            media_duration=body.media_duration_seconds,
+        ),
+    )
+
+    before = [
+        TimedText(key=cue.id, text=cue.text, start=cue.start, end=cue.end)
+        for cue in track.cues
+    ]
+    timed, report = retime(before, options)
+
+    cues = container.subtitles.retime_cues(
+        track_id, {item.key: (item.start, item.end) for item in timed}
+    )
+    container.projects.touch(project.id)
+    logger.info(
+        "retimed track %s with mode %s: %d/%d cues moved",
+        track_id, body.mode.value, report.changed_count, report.cue_count,
+    )
+    return RetimeResponse(items=cues, total=len(cues), report=report)
 
 
 # --------------------------------------------------------------------------

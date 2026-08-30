@@ -174,9 +174,23 @@ class ServiceContainer:
 
     @property
     def tts(self) -> TTSRegistry:
+        """Speech providers, configured from the user's voice settings.
+
+        Built outside the lock deliberately: two of the four providers probe a
+        network endpoint while constructing their voice catalogue, and holding
+        the container's single lock across that would stall every other lazy
+        service behind a slow HTTP call. The worst case of the race is two
+        registries being built concurrently and one being discarded.
+        """
+        with self._lock:
+            cached = self._tts
+        if cached is not None:
+            return cached
+
+        registry = TTSRegistry.build(SettingsService(SettingsRepository(self.db)))
         with self._lock:
             if self._tts is None:
-                self._tts = TTSRegistry.build()
+                self._tts = registry
             return self._tts
 
     # -- media -------------------------------------------------------------
@@ -216,7 +230,11 @@ class ServiceContainer:
             if self._transcription is not None:
                 self._transcription.invalidate()
         if not touched or any(key.startswith("voice.") for key in touched):
-            if self._tts is not None:
-                self._tts.invalidate()
+            # Dropped, not merely re-probed: an API key or endpoint URL is
+            # baked into a provider instance when it is constructed, so a
+            # cache clear alone would leave the old credential in use until
+            # the next restart.
+            with self._lock:
+                self._tts = None
 
         logger.debug("container invalidated for keys=%s", sorted(touched) or "all")

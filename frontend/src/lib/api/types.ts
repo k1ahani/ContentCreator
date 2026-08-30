@@ -34,6 +34,7 @@ export type JobType =
   | "transcribe"
   | "text_task"
   | "subtitle_generate"
+  | "subtitle_sync"
   | "subtitle_render"
   | "tts_synthesize";
 
@@ -57,6 +58,20 @@ export type SubtitleSegmentationMode =
   | "short"
   | "normal"
   | "custom";
+
+/** How a whole track is retimed in one batch operation. */
+export type SubtitleRetimeMode = "shift" | "scale" | "reading_speed" | "stretch";
+
+/** Where a track's current timings came from, and therefore how much to trust them. */
+export type SubtitleTimingSource =
+  | "asr_segments"
+  | "estimated"
+  | "audio_aligned"
+  | "speech_distributed"
+  | "manual";
+
+/** Which placement strategy the audio synchronisation job should use. */
+export type SubtitleSyncStrategy = "auto" | "align" | "distribute";
 
 export type VoiceGender = "male" | "female" | "unknown";
 export type VoiceAge = "young" | "adult" | "mature" | "unknown";
@@ -178,6 +193,25 @@ export interface SubtitleCue {
   metadata: Record<string, unknown>;
 }
 
+/** What a retime or a synchronisation actually changed. */
+export interface RetimeReport {
+  mode: string;
+  cue_count: number;
+  changed_count: number;
+  overlaps_fixed: number;
+  durations_adjusted: number;
+  clamped_count: number;
+  max_shift_seconds: number;
+  first_start: number;
+  last_end: number;
+}
+
+export interface RetimeResponse {
+  items: SubtitleCue[];
+  total: number;
+  report: RetimeReport;
+}
+
 export interface SubtitleTrack {
   id: string;
   project_id: string;
@@ -272,12 +306,16 @@ export interface VoiceSpec {
   provider: string;
   name: string;
   language: Language;
+  /** Full BCP-47 tag, e.g. "en-GB" - the accent, which `language` cannot express. */
+  locale: string;
   gender: VoiceGender;
   age: VoiceAge;
   styles: SpeakingStyle[];
   supports_pitch: boolean;
   supports_rate: boolean;
   description: string;
+  /** A sample the provider hosts itself, when it publishes one. */
+  preview_url: string | null;
 }
 
 export interface TTSProviderInfo {
@@ -291,6 +329,11 @@ export interface TTSProviderInfo {
   supports_styles: boolean;
   supported_languages: Language[];
   voice_count: number;
+  pricing: "free" | "freemium" | "paid";
+  /** True when this provider needs a key before it can do anything at all. */
+  requires_api_key: boolean;
+  /** Settings key holding that key, so the UI can point straight at it. */
+  api_key_setting: string | null;
 }
 
 // -- system / settings -------------------------------------------------

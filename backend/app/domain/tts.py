@@ -45,6 +45,12 @@ class VoiceSpec(BaseModel):
     #: Human-readable name shown in the selector.
     name: str
     language: Language
+    #: Full BCP-47 tag the voice actually speaks, e.g. ``en-GB`` or ``fa-IR``.
+    #: ``language`` is the platform's coarse enum and cannot express accent;
+    #: with dozens of English voices on offer the accent is the thing a user is
+    #: actually choosing between, so it is carried separately rather than
+    #: buried inside the display name.
+    locale: str = ""
     gender: VoiceGender = VoiceGender.UNKNOWN
     age: VoiceAge = VoiceAge.UNKNOWN
     #: Styles this voice can be asked to use. Providers that do not support
@@ -53,6 +59,11 @@ class VoiceSpec(BaseModel):
     supports_pitch: bool = False
     supports_rate: bool = True
     description: str = ""
+    #: A sample the provider already hosts, when it publishes one. Providers
+    #: without hosted samples leave this empty and the platform synthesises a
+    #: preview on demand instead - see
+    #: ``GET /api/ai/tts/voices/{voice_id}/preview``.
+    preview_url: str | None = None
 
 
 class SpeechOptions(BaseModel):

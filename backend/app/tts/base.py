@@ -25,13 +25,19 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Literal
 
 from app.domain.enums import Language
 from app.domain.tts import SpeechOptions, VoiceSpec
 from app.process import CancelToken
 
 LogCallback = Callable[[str, str], None]
+
+
+#: How a provider is paid for. Shown next to its name so the user knows what
+#: they are choosing before they choose it, rather than discovering a quota
+#: after a job fails.
+Pricing = Literal["free", "freemium", "paid"]
 
 
 @dataclass(slots=True)
@@ -49,6 +55,15 @@ class TTSProviderInfo:
     supports_styles: bool = False
     supported_languages: list[Language] = field(default_factory=list)
     voice_count: int = 0
+    #: Commercial shape of the service behind this provider.
+    pricing: Pricing = "free"
+    #: True when the provider cannot work at all until the user pastes a key
+    #: into Settings. Distinguishes "not configured yet" (the user's next
+    #: step) from "broken" (something to investigate) in the UI.
+    requires_api_key: bool = False
+    #: Settings key holding that credential, so the UI can link straight to
+    #: the field instead of describing where to find it.
+    api_key_setting: str | None = None
 
 
 class TTSProvider(ABC):
