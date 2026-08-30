@@ -766,3 +766,151 @@ sqlite3.IntegrityError: FOREIGN KEY constraint failed
 2026-08-30 11:57:37 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
 2026-08-30 11:58:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
 2026-08-30 11:58:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:17:22 INFO     [__main__] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 15:17:22 INFO     [app.main] serving frontend from E:\LoyalAxis\ContentCreatorApp\frontend\dist
+2026-08-30 15:17:22 INFO     [app.jobs.registry] all 7 job type(s) have handlers
+2026-08-30 15:17:22 INFO     [app.jobs.queue] job queue started with 2 worker(s)
+2026-08-30 15:17:22 INFO     [app.container] application ready (workers=2)
+2026-08-30 15:17:22 INFO     [app.main] listening on http://127.0.0.1:8420
+2026-08-30 15:17:25 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:17:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:17:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:18:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:18:29 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 15:20:02 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:46:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:47:15 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:47:45 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:48:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:48:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:49:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:49:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:50:17 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:50:47 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:51:18 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:51:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:52:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:52:49 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:53:19 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:53:49 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:54:20 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:54:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:55:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:55:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:56:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:57:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:57:33 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:58:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:58:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:59:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 18:59:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:00:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:00:40 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:01:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:01:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:02:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:02:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:03:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:03:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:04:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:04:43 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:05:16 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:05:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:06:21 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:06:52 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:07:27 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:07:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:08:32 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:09:03 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:09:33 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:10:04 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:10:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:11:06 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:11:36 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:12:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:12:37 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:13:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:13:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:14:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:14:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:15:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:15:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:16:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:16:51 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:17:22 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:17:52 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:18:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:18:53 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:19:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:19:53 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:20:24 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:20:57 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:21:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:22:06 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:22:37 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:23:07 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:23:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:24:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:24:38 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:25:08 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:25:39 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:26:09 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:26:40 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:27:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:27:40 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:28:10 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:28:41 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:29:11 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:29:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:30:12 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:30:42 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:31:17 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:31:48 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:32:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:32:53 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:33:23 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:33:54 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:34:28 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:34:59 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:35:34 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:36:05 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:36:35 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:51:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:52:37 INFO     [app.jobs.queue] queued job 00tklc5p8wkweawl (subtitle_generate)
+2026-08-30 19:52:37 INFO     [app.jobs.queue] running job 00tklc5p8wkweawl (subtitle_generate)
+2026-08-30 19:52:37 INFO     [app.jobs.queue] job 00tklc5p8wkweawl completed in 0.0s
+2026-08-30 19:53:07 INFO     [app.api.routers.subtitles] retimed track 00tklc5p9lyikenx with mode shift: 65/65 cues moved
+2026-08-30 19:53:28 INFO     [app.api.routers.subtitles] retimed track 00tklc5p9lyikenx with mode shift: 65/65 cues moved
+2026-08-30 19:53:32 INFO     [app.api.routers.subtitles] retimed track 00tklc5p9lyikenx with mode shift: 65/65 cues moved
+2026-08-30 19:53:46 INFO     [app.jobs.queue] queued job 00tklc7m2y8jlf88 (subtitle_sync)
+2026-08-30 19:53:46 INFO     [app.jobs.queue] running job 00tklc7m2y8jlf88 (subtitle_sync)
+2026-08-30 19:53:46 INFO     [app.media.ffmpeg.locator] using ffmpeg from E:\LoyalAxis\ContentCreatorApp\bin\ffmpeg\ffmpeg.exe (bundled)
+2026-08-30 19:53:47 INFO     [app.media.audio] extracting audio: sarbarg.mp4 -> sync-00tkjek0345qxkth.wav (preset=wav, duration=79.4s)
+2026-08-30 19:53:48 INFO     [app.transcription.providers.faster_whisper_provider] loading faster-whisper model 'large-v3'
+2026-08-30 19:54:15 INFO     [app.transcription.providers.faster_whisper_provider] model 'large-v3' ready in 27.1s
+2026-08-30 19:54:15 INFO     [faster_whisper] Processing audio with duration 01:19.366
+2026-08-30 19:54:16 INFO     [faster_whisper] VAD filter removed 00:00.000 of audio
+2026-08-30 20:00:46 ERROR    [app.jobs.queue] job 00tklc7m2y8jlf88 raised an unexpected error
+Traceback (most recent call last):
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\queue.py", line 207, in _run_job
+    output = handler(context) or {}
+             ^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\handlers\subtitle_sync.py", line 104, in handle_subtitle_sync
+    segments, language = _measure(ctx, audio_path)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\jobs\handlers\subtitle_sync.py", line 229, in _measure
+    result = engine.transcribe(
+             ^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\app\transcription\providers\faster_whisper_provider.py", line 272, in transcribe
+    for index, segment in enumerate(segments_iter):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 1809, in restore_speech_timestamps
+    for segment in segments:
+                   ^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 1148, in generate_segments
+    encoder_output = self.encode(segment)
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "E:\LoyalAxis\ContentCreatorApp\backend\.venv\Lib\site-packages\faster_whisper\transcribe.py", line 1358, in encode
+    return self.model.encode(features, to_cpu=to_cpu)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mkl_malloc: failed to allocate memory
